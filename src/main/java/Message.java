@@ -514,13 +514,10 @@ public abstract class Message implements DES,RSA  {
     }
     public String BinToIp(String Bin){//二进制转化为十进制IP
         String IP="";
-        int b;
+        String b;
         for(int i=0;i<4;i++){
-            b=Integer.parseInt(Bin.substring(i*8,(i+1)*8),2);
+            b=String.valueOf(Integer.parseInt(Bin.substring(i*8,(i+1)*8),2));
             IP+=b;
-            if(i!=3){
-                IP+=".";
-            }
         }
 
         return IP;

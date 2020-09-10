@@ -5,9 +5,8 @@ import java.util.concurrent.*;
 
 public class SocketServer {
     private static int peopleNumber = 4;
-    private static int port = 8888;
+    private static int port = 4444;
     private static ExecutorService serviceThread = Executors.newFixedThreadPool(peopleNumber);
-
     public static void main(String[] args) {
         try {
             ServerSocket server = new ServerSocket(port);
