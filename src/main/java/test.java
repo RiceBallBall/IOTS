@@ -15,7 +15,7 @@ public class test extends Message {
         int rec[] = RSA.rsa();
         int sen[] = RSA.rsa();
         test t = new test();
-
+        Tools tool=new Tools();
         String mes = t.m24(order,k,AD,AD);
         System.out.println(mes);
         System.out.println(t.verify_m(mes));
@@ -32,6 +32,8 @@ public class test extends Message {
             System.out.println(data[i]);
         }
         System.out.println("------------------");
+        System.out.println(tool.getTS());
+
 
 
 
