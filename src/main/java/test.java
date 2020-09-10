@@ -15,28 +15,20 @@ public class test extends Message {
         int rec[] = RSA.rsa();
         int sen[] = RSA.rsa();
         test t = new test();
-        Tools tool=new Tools();
-        String mes = t.m24(order,k,AD,AD);
+        String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,rec[3],rec[2]);
+        String mes = t.m2(ID1,TS,LT,k,TGT,ID2,AD,AD);
         System.out.println(mes);
-        System.out.println(t.verify_m(mes));
-
         System.out.println("------------------");
-        String inf[] = t.Divide(mes);
-        String data[] = t.m24_d(inf[6],k);
-        for (int i = 0; i < inf.length; i++) {
-            System.out.println(inf[i]);
-        }
-
+        //       System.out.println(t.verify_m(mes));
+//        String inf[] = t.Divide(mes);
+//        String data[] = t.m2_d(inf[6],ID2);
+//        for (int i = 0; i < inf.length; i++) {
+//            System.out.println(inf[i]);
+//        }
+//        System.out.println("------------------");
+//        for (int i = 0; i < data.length; i++) {
+//            System.out.println(data[i]);
+//        }
         System.out.println("------------------");
-        for (int i = 0; i < data.length; i++) {
-            System.out.println(data[i]);
-        }
-        System.out.println("------------------");
-        System.out.println(tool.getTS());
-
-
-
-
-
     }
 }
