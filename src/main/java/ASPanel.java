@@ -6,7 +6,7 @@ public class ASPanel extends Thread {
     JLabel label = new JLabel("公钥:");
     JLabel label8 = new JLabel("N:");
     JLabel label1 = new JLabel("私钥:");
-    JLabel label2 = new JLabel("接收方IP:");
+    JLabel label2 = new JLabel("客户ID:");
     JLabel label3 = new JLabel("发送包内容:");
     JLabel label4 = new JLabel("收到包内容:");
     JLabel label5 = new JLabel("收到包明文:");

@@ -13,19 +13,28 @@ class ASCallable extends Message implements Callable,DES {
     private Socket socket = null;
     private String AS_IP;
     private String TS;
-    ASPanel Panel;
-    Tools tools;
+    private String ID_tgs;
+    private String LT;
+    private int tgs_pk;
+    private int tgs_n;
+    private ASPanel Panel;
+    private Tools tools;
+    private String TGS_IP;
+    public Socket so_tgs;
 
-    public ASCallable(Socket socket, ASPanel asPanel) {
+    public ASCallable(Socket socket,Socket socket_TGS) {
         tools = new Tools();
         this.socket = socket;
         rsa_n = 151;
         rsa_pk = 359;
         rsa_sk = 667;
-        Panel = asPanel;
+        Panel = new ASPanel("AS");
         AS_IP = "192168043188";
         TS = tools.getTS();
-
+        LT="60";
+        tgs_n=1679;
+        tgs_pk=775;
+        so_tgs=socket_TGS;
     }
 
     public void setTS(String tsN) {
@@ -33,7 +42,7 @@ class ASCallable extends Message implements Callable,DES {
         return;
     }
     public void setKc(String ID_c,String psw){
-
+        Kc=DES.toString(DES.encode(psw,ID_c));
     }
 
 
@@ -43,25 +52,22 @@ class ASCallable extends Message implements Callable,DES {
         InetAddress addr = socket.getInetAddress();
         try (InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {//这里
-
+            //收到后的设置显示收到的报文
             String rec_package = bufferedReader.readLine();//message
-            System.out.println(addr.getHostName() + "'s message: " + rec_package + " from" + addr.getHostAddress());
-            Panel.textArea4.setText(rec_package);
+            System.out.println("Received a messege from "+ addr.getHostAddress());
+            Panel.textArea4.setText(rec_package);//显示收到的包
             String inf[] = Divide(rec_package);
-            String ar[] = m2_d(inf[6], Kc);
-            String example = "";
-            for (int i = 0; i < ar.length; i++) {
-                System.out.println(ar[i]);
-                example += ar[i] + "#";
-            }
-            Panel.textArea5.setText(example);
+            String Basic_info[] = Divide(rec_package);
+            //Panel.textArea5.setText();显示解码的包
+
+//            String ar[] = m2_d(inf[6], Kc);
+//            String example = "";
+//            for (int i = 0; i < ar.length; i++) {
+//                System.out.println(ar[i]);
+//                example += ar[i] + "#";
+//            }
             packSend(socket, "[Connected....Waiting for action.....]");
-            /*if(bufferedReader.readLine().equals("send")){
 
-            }
-            else{
-
-            }*/
         } catch (IOException e) {
             e.printStackTrace();
             return "false";
@@ -82,40 +88,46 @@ class ASCallable extends Message implements Callable,DES {
         return true;
     }
 
-    public ArrayList<String> packReceive(Socket socket, ArrayList<String> arrayList) {
-        try {
-            InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String line = "";
-            while (line != "exit") {
-                Thread.sleep(100);
-                line = bufferedReader.readLine();
-                arrayList.add(line);
+    public void mes_display(String Basic[],String[] mes){
+        String bas="";
+            bas=bas+"控制字段："+Basic[0]+"\n";
+            bas=bas+"报类型编号："+Basic[1]+"\n";
+            bas=bas+"发送IP："+Basic[2]+"\n";
+            bas=bas+"接收IP："+Basic[3]+"\n";
+            bas=bas+"包长度："+Basic[4]+"\n";
+            bas=bas+"保留字段："+Basic[5]+"\n";
+            bas=bas+"数据内容："+"\n";
+            for (int i=0;i<mes.length;i++){
+                bas=mes[i]+"\n";
             }
-            return arrayList;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return arrayList;
-        }
+            this.Panel.textArea5.setText(bas);
     }
 
-    public void ASexcecution(String Package) {
-        String Basic_info[] = Divide(Package);
+    public void ASexcecution(String Package,String Basic_info[]) {
         String data[];
-        switch (Basic_info[1]) {
+        switch (Basic_info[1]) {//IPr Basic_info[3]
             case "1": {//Client发起请求
+                setTS(tools.getTS());
                 data = m1_d(Basic_info[6]);
                 ID_c=data[0];
-
+                ID_tgs=data[1];
+                String Kc_tgs=DES.toString(DES.encode(ID_tgs,ID_c));
+                //查询tgs
+                String tgt=TGT(Kc_tgs,ID_c,Basic_info[3],ID_tgs,TS,LT,tgs_pk,tgs_n);
+                String re_to_Client=m2(ID_tgs,TS,LT,Kc_tgs,tgt,ID_c,AS_IP,Basic_info[3]);
+                String re_to_tgs=m15(ID_c,Kc,TS,tgs_pk,tgs_n,AS_IP,TGS_IP);//
+                packSend(socket,re_to_Client);//返回给Client
+                this.Panel.textArea3.setText(re_to_Client);
+                packSend(socket,re_to_tgs);//同步注册信息到TGS
+                this.Panel.textArea3.setText(re_to_tgs);
                 break;
             }
             case "7": {//Client的注册请求
                 data = m7_d(Basic_info[6], rsa_sk, rsa_n);//IDc,IDtgs,TS1
-                String ID = data[0];
-                String Kc = data[1];//写入数据库，返回成功报文8
-                Boolean result = true;//结果
                 ID_c=data[0];
-                packSend(socket, m8(result, rsa_sk, rsa_n, AS_IP, Basic_info[3]));
+                setKc(ID_c,data[1]);//写入数据库，返回成功报文8
+                Boolean result = true;//结果
+                packSend(socket, m8(result, rsa_sk, rsa_n, AS_IP, Basic_info[3]));//结果
                 break;
             }
             case "16": {//TGS的时间戳同步

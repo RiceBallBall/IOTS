@@ -96,14 +96,14 @@ public abstract class Message implements DES,RSA  {
         return info;
     }
 
-    public String ST(String Kc_v, String ID_c, String AD_c, String IDv, String TS4, String lifetime2) {
-        String message = DES.encode(IDv,(Kc_v+ID_c+AD_c+IDv+TS4+DemitoBin(lifetime2)));
+    public String ST(String Kc_v, String ID_c, String AD_c,String IDv, int pk,int n, String TS4, String lifetime2) {
+        String message = RSA.encode(Kc_v+ID_c+AD_c+IDv+TS4+DemitoBin(lifetime2),pk,n);
  //      message=DES.decode(IDv,message);
         return message;
     }
-    public String[] ST_d(String data,String Kc_v){
+    public String[] ST_d(String data,int sk,int n){
         String info[]=new String[6];
-        data=DES.decode(Kc_v,data);
+        data=RSA.decode(data,sk,n);
         info[0]=data.substring(0,8);//Kc_v
         info[1]=data.substring(8,16);//IDc
         info[2]=data.substring(16,28);//ADc

@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 public class AS extends Message implements RSA,DES{
     private static int peopleNumber=4;
     private static int port=4444;
+    private static int port_TGS=8888;
     private static ExecutorService serviceThread = Executors.newFixedThreadPool(peopleNumber);
     private int rsa_pk;
     private int rsa_sk;
@@ -22,12 +23,14 @@ public class AS extends Message implements RSA,DES{
 
     }
 
-    public void AS_start(ASPanel asPanel){
+    public void AS_start(){
             try {
                 ServerSocket server = new ServerSocket(port);
+                ServerSocket server_TGS = new ServerSocket(port_TGS);
                 while (true) {
                     Socket socket = server.accept();
-                    ASCallable task = new ASCallable(socket,asPanel);
+                    Socket socket_TGS=server_TGS.accept();
+                    ASCallable task = new ASCallable(socket,socket_TGS);
                     try{
                         serviceThread.submit(task);
                     }catch (Exception e){
@@ -43,6 +46,6 @@ public class AS extends Message implements RSA,DES{
     public static void main(String[] args) {
         AS as=new AS();
         ASPanel asPanel=new ASPanel("AS");
-        as.AS_start(asPanel);
+        as.AS_start();
     }
 }
