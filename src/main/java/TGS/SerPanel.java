@@ -1,8 +1,11 @@
+package TGS;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 
 public class SerPanel extends WindowAdapter{
@@ -28,11 +31,11 @@ public class SerPanel extends WindowAdapter{
     JScrollPane scrollPane_2 = new JScrollPane();
     JScrollPane scrollPane_3 = new JScrollPane();
 
-    ServerSocket the_socket;
+    Socket the_socket;
     public Boolean tgs;
 
 
-    public SerPanel(String Name, int pk, int sk, int n, ServerSocket socket, boolean tgs_) {
+    public SerPanel(String Name, int pk, int sk, int n, Socket socket, boolean tgs_) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -48,27 +51,23 @@ public class SerPanel extends WindowAdapter{
         tgs=tgs_;
     }
     private void placeComponents1() {
-        int para[] = RSA.rsa();
         panel.setLayout(null);
 
         label.setBounds(40, 30, 30, 25);//pk
         panel.add(label);
         textField.setBounds(75, 30, 50, 25);
-        textField.setText(Integer.toString(para[3]));
         textField.setEditable(false);
         panel.add(textField);
 
         label8.setBounds(130, 30, 15, 25);//n
         panel.add(label8);
         textField8.setBounds(145, 30, 50, 25);
-        textField8.setText(Integer.toString(para[2]));
         textField8.setEditable(false);
         panel.add(textField8);
 
         label1.setBounds(200, 30, 30, 25);//sk
         panel.add(label1);
         textField1.setBounds(235, 30, 50, 25);
-        textField1.setText(Integer.toString(para[4]));
         textField1.setEditable(false);
         panel.add(textField1);
 

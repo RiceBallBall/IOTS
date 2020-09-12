@@ -1,3 +1,5 @@
+package AS;
+
 import java.security.MessageDigest;
 public abstract class Message implements DES,RSA  {
 
@@ -516,7 +518,7 @@ public abstract class Message implements DES,RSA  {
         String IP="";
         String b;
         for(int i=0;i<4;i++){
-            b=String.valueOf(Integer.parseInt(Bin.substring(i*8,(i+1)*8),2));
+            b=fill(String.valueOf(Integer.parseInt(Bin.substring(i*8,(i+1)*8),2)),3);
             IP+=b;
         }
 

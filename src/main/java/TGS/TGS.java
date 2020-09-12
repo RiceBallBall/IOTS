@@ -1,4 +1,4 @@
-
+package TGS;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AS extends Message implements RSA,DES{
+public class TGS extends Message implements RSA, DES {
     private static int peopleNumber=4;
     private static int port=8888;
     private static ExecutorService serviceThread = Executors.newFixedThreadPool(peopleNumber);
@@ -18,12 +18,12 @@ public class AS extends Message implements RSA,DES{
     ServerSocket server_TGS;
 //    String divided[] = {filed,type,IPs,IPr,len,retain,data};
 
-    public AS() throws IOException {
+    public TGS() throws IOException {
         rsa_n =151;
         rsa_pk=359;
         rsa_sk=667;
         this.server_TGS= new ServerSocket(port_TGS);
-        ToTgsPanel= new SerPanel("AS-TGS",rsa_pk,rsa_sk,rsa_n,server_TGS,true);
+      //  ToTgsPanel= new SerPanel("AS-TGS",rsa_pk,rsa_sk,rsa_n,server_TGS,true);
     }
 
     public void AS_start(){
@@ -36,7 +36,7 @@ public class AS extends Message implements RSA,DES{
                 ToTgsPanel.run();
                 while (true) {
                     Socket socket=server.accept();
-                    ASCallable task = new ASCallable(server,socket,tgs_bufferedReader,tgs_bufferedWriter,ToTgsPanel);
+                    TGSCallable task = new TGSCallable(server,socket,tgs_bufferedReader,tgs_bufferedWriter,ToTgsPanel);
                     try{
                         serviceThread.submit(task);
                     }catch (Exception e){
@@ -49,9 +49,9 @@ public class AS extends Message implements RSA,DES{
       //  asPanel.run(rsa_pk,rsa_sk,rsa_n);
     }
 
-    public static void main(String[] args) throws IOException {
-        AS as=new AS();
-//        ASPanel asPanel=new ASPanel("AS");
-        as.AS_start();
-    }
+//    public static void main(String[] args) throws IOException {
+//        AS as=new AS();
+////        ASPanel asPanel=new ASPanel("AS");
+//        as.AS_start();
+//    }
 }

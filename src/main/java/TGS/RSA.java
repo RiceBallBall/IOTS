@@ -1,9 +1,12 @@
+package TGS;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Random;
+
 public interface RSA {
 
     static String fill(String str){//补位

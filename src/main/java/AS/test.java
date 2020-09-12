@@ -1,3 +1,4 @@
+package AS;
 
 public class test extends Message {
     public static void main(String[] args) {
@@ -12,16 +13,16 @@ public class test extends Message {
         String warning="wa";
         String num="20";
         String seq="66";
-        int rec[] = RSA.rsa();
-        int sen[] = RSA.rsa();
+        int pk =1129,n=1517,sk=389;
         test t = new test();
-        String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,rec[3],rec[2]);
-        String mes = t.m2(ID1,TS,LT,k,TGT,ID2,AD,AD);
+        int [] rsa=RSA.rsa();
+    //    String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,rec[3],rec[2]);
+        String mes = t.m7(ID1, k, rsa[3] ,rsa[2], AD, AD);
         System.out.println(mes);
         System.out.println("------------------");
                System.out.println(t.verify_m(mes));
         String inf[] = t.Divide(mes);
-        String data[] = t.m2_d(inf[6],ID2);
+        String data[] = t.m7_d(inf[6], rsa[4],rsa[2]);
         for (int i = 0; i < inf.length; i++) {
             System.out.println(inf[i]);
         }

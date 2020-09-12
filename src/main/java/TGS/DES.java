@@ -1,3 +1,5 @@
+package TGS;
+
 public interface DES {
 
     static public String decode(String key, String data) {

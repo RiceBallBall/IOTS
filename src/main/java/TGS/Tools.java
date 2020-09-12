@@ -1,4 +1,6 @@
-package AS;
+package TGS;
+
+import AS.DES;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -120,7 +122,7 @@ public class Tools {
     public static void main(String[] args) throws IOException {
         String s = Tools.FileIn("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/testdata.txt");
         System.out.println("[test:" + s + "]");
-        s=DES.encode("12345678",s);
+        s= AS.DES.encode("12345678",s);
         System.out.println("[Encoded:" + s + "]");
         String dataSplite[]=dataSplite(s,4);
         String integrated="";
@@ -130,7 +132,7 @@ public class Tools {
             integrated+=dataSplite[i];
         }
 
-        s=DES.decode("12345678",integrated);
+        s= DES.decode("12345678",integrated);
         System.out.println("[Decoded:"+s+"]");
         Tools.FileOut("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/test.txt", s);
 //

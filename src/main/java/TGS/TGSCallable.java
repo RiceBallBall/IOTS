@@ -1,10 +1,12 @@
+package TGS;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
-class ASCallable extends Message implements Callable<Boolean>, DES {
+class TGSCallable extends Message implements Callable<Boolean>, DES {
     private int rsa_pk;
     private int rsa_sk;
     private int rsa_n;
@@ -17,19 +19,19 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
     private String LT;
     private int tgs_pk;
     private int tgs_n;
-    private ASPanel Panel;
+    private SerPanel Panel;
     private Tools tools;
     private String TGS_IP;
     public BufferedReader tgs_br;
     public BufferedWriter tgs_bw;
-    private ASPanel ToTgsPanel;
-    public ASCallable(ServerSocket serverSocket,Socket the_socket,BufferedReader bufferedReader, BufferedWriter bufferedWriter, ASPanel tgsP) throws IOException {
+    private SerPanel ToTgsPanel;
+    public TGSCallable(ServerSocket Socket, Socket the_socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter, SerPanel tgsP) throws IOException {
         tools = new Tools();
         this.socket = the_socket;
         rsa_n = 151;
         rsa_pk = 359;
         rsa_sk = 667;
-        Panel = new ASPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket,false);
+        Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,socket,false);
         AS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";
@@ -84,7 +86,7 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
                     rec_package = (char) inf + bufferedReader.readLine();//message
                     System.out.println("Received a messege from " + addr.getHostAddress());
                     Panel.textArea4.setText(rec_package);//显示收到的包
-                    ASexcecution(rec_package);
+                    TGSexcecution(rec_package);
                 }
             }
             //Panel.textArea5.setText();显示解码的包
@@ -114,7 +116,7 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
         return true;
     }
 
-    public void mes_display(String Basic[], String[] mes, ASPanel this_panel) {
+    public void mes_display(String Basic[], String[] mes, SerPanel this_panel) {
         String bas = "";
         bas = bas + "控制字段：" + Basic[0] + "\n";
         bas = bas + "报类型编号：" + Basic[1] + "\n";
@@ -129,43 +131,17 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
         this_panel.textArea5.setText(bas);
     }
 
-    public void ASexcecution(String rec_package) throws IOException {
+    public void TGSexcecution(String rec_package) throws IOException {
         String Basic_info[] = Divide(rec_package);
         String data[];
         switch (Basic_info[1]) {//IPr Basic_info[3]
             case "1": {//Client发起请求
-                setTS(tools.getTS());
-                data = m1_d(Basic_info[6]);
-                ID_c = data[0];
-                Panel.textArea2.setText(ID_c);
-                ID_tgs = data[1];
-                String Kc_tgs = DES.toString(DES.encode(ID_tgs, ID_c));
-                mes_display(Basic_info,data,Panel);
-                //查询tgs sql
 
-                String tgt = TGT(Kc_tgs, ID_c, Basic_info[3], ID_tgs, TS, LT, tgs_pk, tgs_n);
-                String re_to_Client = m2(ID_tgs, TS, LT, Kc_tgs, tgt, ID_c, AS_IP, Basic_info[3]);//反馈Client
-                packSend(socket, re_to_Client);//返回给Client
-                this.ToTgsPanel.textArea3.setText(re_to_Client);
-
-
-                String re_to_tgs = m15(ID_c, Kc, TS, tgs_pk, tgs_n, AS_IP, TGS_IP);
-                tgs_bw.write(re_to_tgs);//同步注册信息->tgs
-                tgs_bw.flush();
-                this.Panel.textArea3.setText(re_to_tgs);
 
                 break;
             }
             case "7": {//Client的注册请求
-                data = m7_d(Basic_info[6], rsa_sk, rsa_n);//IDc,IDtgs,TS1
-                ID_c = data[0];
-                Panel.textArea2.setText(ID_c);
-                setKc(ID_c, data[1]);//写入数据库，返回成功报文8
-                Boolean result = true;//结果
-                String mes_8 = m8(result, rsa_sk, rsa_n, AS_IP, Basic_info[3]);
-                packSend(socket, mes_8);//结果
-                this.Panel.textArea3.setText(mes_8);
-                mes_display(Basic_info,data,Panel);
+
 
                 break;
 
@@ -174,11 +150,7 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
 //
 //            }
             case "0": {//Client的离线请求
-                data = m23a_d(Basic_info[6], rsa_sk, rsa_n);//IDc
-                String mes_24 = m24("11", Kc, AS_IP, Basic_info[3]);
-                packSend(socket, mes_24);//离线反馈
-                this.Panel.textArea3.setText(mes_24);
-                mes_display(Basic_info,data,Panel);
+
                 break;
             }
 
