@@ -17,8 +17,10 @@ public interface DES {
             temp[i] = F(temp[i], Key);
             temp[i] = Permute(temp[i], matrix_2);//���û�
 //            Decoded += Tools.toString(temp[i]);
-            Decoded += toString(temp[i]);
+//            Decoded += toString(temp[i]);
+            Decoded+=temp[i];
         }
+        Decoded=toString(Decoded);
         return Decoded;
     }
 
@@ -184,16 +186,20 @@ public interface DES {
 
     static String toString(String str) {
         String s = "";
-        for (int j = 0; j < str.length() / 8; j++) {
+        int j=0;
+        while (str.substring(j * 8, j * 8 + 8).equals("00000000")){
+            j++;
+        }
+        for (; j < str.length() / 8; j++) {
             String t1 = str.substring(j * 8, j * 8 + 8);
-            if (!t1.equals("00000000")) {
+//            if (!t1.equals("00000000")) {
                 int temp = Integer.valueOf(t1, 2);
                 s = s + (char) temp;
-            }
+//            }
         }
         return s;
-
     }
+
 
 
     static int[][] getS(int s) {

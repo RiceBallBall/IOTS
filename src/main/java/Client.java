@@ -15,7 +15,7 @@ public class Client {
         String str;
         Scanner in = new Scanner(System.in);
         try {
-            Socket socket = new Socket("192.168.43.3", 8888);
+            Socket socket = new Socket("localhost", 8888);
 //     System.out.println(socket.getInetAddress());// 输出连接者的IP。
             System.out.println("成功连接服务器");
 //            while (true) {

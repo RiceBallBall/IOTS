@@ -1,32 +1,37 @@
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 
-public class ASPanel extends Thread {
+public class ASPanel extends WindowAdapter{
     public JPanel panel = new JPanel();
-    JLabel label = new JLabel("公钥:");
-    JLabel label8 = new JLabel("N:");
-    JLabel label1 = new JLabel("私钥:");
-    JLabel label2 = new JLabel("客户ID:");
-    JLabel label3 = new JLabel("发送包内容:");
-    JLabel label4 = new JLabel("收到包内容:");
-    JLabel label5 = new JLabel("收到包明文:");
+    private JLabel label = new JLabel("公钥:");
+    private JLabel label8 = new JLabel("N:");
+    private JLabel label1 = new JLabel("私钥:");
+    private JLabel label2 = new JLabel("客户ID:");
+    private JLabel label3 = new JLabel("发送包内容:");
+    private JLabel label4 = new JLabel("收到包内容:");
+    private JLabel label5 = new JLabel("收到包明文:");
 
 
-    JTextField textField = new JTextField();
-    JPasswordField textField1 = new JPasswordField(20);
-    JTextArea textArea3 = new  JTextArea();
-    JTextArea textArea4 = new  JTextArea();
-    JTextArea textArea5 = new  JTextArea();
-    JTextArea textArea2 = new  JTextArea();
-    JTextField textField8 = new JTextField();
+    private JTextField textField = new JTextField();
+    private JPasswordField textField1 = new JPasswordField(20);
+    public JTextArea textArea3 = new JTextArea();
+    public JTextArea textArea4 = new JTextArea();
+    public JTextArea textArea5 = new JTextArea();
+    public JTextArea textArea2 = new JTextArea();
+    public JTextField textField8 = new JTextField();
 
     JScrollPane scrollPane_1 = new JScrollPane();
     JScrollPane scrollPane_2 = new JScrollPane();
     JScrollPane scrollPane_3 = new JScrollPane();
 
+    ServerSocket the_socket;
 
 
-    public ASPanel(String Name) {
+    public ASPanel(String Name, int pk, int sk, int n, ServerSocket socket) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -34,9 +39,12 @@ public class ASPanel extends Thread {
         frame.add(panel);
         placeComponents1();
         frame.setVisible(true);
+        frame.addWindowListener(this);
+        textField.setText(String.valueOf(pk));
+        textField1.setText(String.valueOf(sk));
+        textField8.setText(String.valueOf(n));
+        this.the_socket=socket;
     }
-
-
     private void placeComponents1() {
         int para[] = RSA.rsa();
         panel.setLayout(null);
@@ -94,20 +102,23 @@ public class ASPanel extends Thread {
 
     }
 
-    public void run(int rsa_pk,int rsa_sk,int rsa_n) {
-        byte[] b = new byte[1024];
-        textField.setText(String.valueOf(rsa_pk));
-        textField1.setText(String.valueOf(rsa_sk));
-        textField8.setText(String.valueOf(rsa_n));
-        while (true) {
+    public void run() {
+    }
+
+    public void windowClosing(WindowEvent windowEvent) {
+        try {
+            System.out.println("[Disconnected...]");
+            this.the_socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
+        System.exit(0);
     }
 
-    public static void main(String[] args) {
-        ASPanel asPanel=new ASPanel("AS端");
-        asPanel.run();
-    }
+//    public static void main(String[] args) {
+//        ASPanel asPanel = new ASPanel("AS端");
+//        asPanel.run();
+//    }
 
 }
 
