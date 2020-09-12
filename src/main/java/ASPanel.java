@@ -29,9 +29,10 @@ public class ASPanel extends WindowAdapter{
     JScrollPane scrollPane_3 = new JScrollPane();
 
     ServerSocket the_socket;
+    public Boolean tgs;
 
 
-    public ASPanel(String Name, int pk, int sk, int n, ServerSocket socket) {
+    public ASPanel(String Name, int pk, int sk, int n, ServerSocket socket,boolean tgs_) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -44,6 +45,7 @@ public class ASPanel extends WindowAdapter{
         textField1.setText(String.valueOf(sk));
         textField8.setText(String.valueOf(n));
         this.the_socket=socket;
+        tgs=tgs_;
     }
     private void placeComponents1() {
         int para[] = RSA.rsa();
@@ -107,12 +109,13 @@ public class ASPanel extends WindowAdapter{
 
     public void windowClosing(WindowEvent windowEvent) {
         try {
-            System.out.println("[Disconnected...]");
             this.the_socket.close();
+            System.out.println("[Disconnected...]");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.exit(0);
+        if(tgs){
+        System.exit(0);}
     }
 
 //    public static void main(String[] args) {

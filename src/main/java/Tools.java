@@ -3,18 +3,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Tools {
-    public String getTS() {
+    public static String getTS() {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
         String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
         return date;
     }
 
-    public String[] splite_name(String names) {
+    public static String[] splite_name(String names) {
         String name[] = names.split("#");
         return name;
     }
 
-    public String[] dataSplite(String longdata, int len) {//数据，单个数据长度
+    public static String[] dataSplite(String longdata, int len) {//数据，单个数据长度
         int n = longdata.length() / len;
         if (longdata.length() % len != 0) {
             n += 1;
@@ -31,7 +31,7 @@ public class Tools {
 
     }
 
-    static public String FileIn(String f) throws IOException {//本地文件读到字符串
+    public static  String FileIn(String f) throws IOException {//本地文件读到字符串
 //        f = "C:\\Users\\caorui\\Pictures\\ps\\DSC_0649.jpg";
 //        save="C:\\Users\\caorui\\Pictures\\ps\\a.txt";
         File file = new File(f);
@@ -61,7 +61,7 @@ public class Tools {
         return "";
     }
 
-    static public void FileOut(String filePath, String fileStr) {//从字符串存到本地
+    public static void FileOut(String filePath, String fileStr) {//从字符串存到本地
         String fileBin = "";
         char[] strChar = fileStr.toCharArray();
         String temp;
