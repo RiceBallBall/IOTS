@@ -29,7 +29,7 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
         rsa_n = 151;
         rsa_pk = 359;
         rsa_sk = 667;
-        Panel = new ASPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket);
+        Panel = new ASPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket,false);
         AS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";

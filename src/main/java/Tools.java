@@ -116,11 +116,21 @@ public class Tools {
     }
 
     public static void main(String[] args) throws IOException {
-        String s = Tools.FileIn("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/my.pdf");
-        System.out.println("[" + s + "]");
-        Tools.FileOut("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/may.pdf", s);
-//        String s=DES.encode("12345678","123456789");
-//        System.out.println("["+s+"]");
+        String s = Tools.FileIn("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/testdata.txt");
+        System.out.println("[test:" + s + "]");
+        s=DES.encode("12345678",s);
+        System.out.println("[Encoded:" + s + "]");
+        String dataSplite[]=dataSplite(s,4);
+        String integrated="";
+
+        for (int i=0;i<dataSplite.length;i++){
+            System.out.println(dataSplite[i]);
+            integrated+=dataSplite[i];
+        }
+
+        s=DES.decode("12345678",integrated);
+        System.out.println("[Decoded:"+s+"]");
+        Tools.FileOut("/Users/katherine/Desktop/Study/IOTS/iots.cr/src/main/java/test.txt", s);
 //
 //        System.out.println(DES.decode("12345678",s).length());
     }
