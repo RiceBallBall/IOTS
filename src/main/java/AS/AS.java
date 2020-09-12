@@ -13,7 +13,7 @@ public class AS extends Message implements RSA,DES{
     private int rsa_pk;
     private int rsa_sk;
     private int rsa_n;
-    private ASPanel ToTgsPanel;
+    private SerPanel ToTgsPanel;
     private static int port_TGS=4444;
     ServerSocket server_TGS;
 //    String divided[] = {filed,type,IPs,IPr,len,retain,data};
@@ -23,7 +23,7 @@ public class AS extends Message implements RSA,DES{
         rsa_pk=359;
         rsa_sk=667;
         this.server_TGS= new ServerSocket(port_TGS);
-        ToTgsPanel= new ASPanel("AS-TGS",rsa_pk,rsa_sk,rsa_n,server_TGS,true);
+        ToTgsPanel= new SerPanel("AS-TGS",rsa_pk,rsa_sk,rsa_n,server_TGS,true);
     }
 
     public void AS_start(){

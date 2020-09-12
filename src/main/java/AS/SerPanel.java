@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 
-public class ASPanel extends WindowAdapter{
+public class SerPanel extends WindowAdapter{
     public JPanel panel = new JPanel();
     private JLabel label = new JLabel("公钥:");
     private JLabel label8 = new JLabel("N:");
@@ -32,7 +32,7 @@ public class ASPanel extends WindowAdapter{
     public Boolean tgs;
 
 
-    public ASPanel(String Name, int pk, int sk, int n, ServerSocket socket,boolean tgs_) {
+    public SerPanel(String Name, int pk, int sk, int n, ServerSocket socket, boolean tgs_) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
