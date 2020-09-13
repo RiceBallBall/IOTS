@@ -79,39 +79,39 @@ public class Client extends Message {
         BufferedReader br;
         OutputStreamWriter osw;
         BufferedWriter bw;
-//        String ID_c = "ID000001";
-//        String K_c = "12345678";
-//        String IPs = "192168001001";
-//        String IPr = "127010001001";
-//        Scanner in = new Scanner(System.in);
+        String ID_c = "ID000001";
+        String K_c = "12345678";
+        String IPs = "192168001001";
+        String IPr = "127010001001";
 
         try {
 
             //  Socket socket = new Socket("localhost", 8888);
-//     System.out.println(socket.getInetAddress());// 输出连接者的IP。
+            //  System.out.println(socket.getInetAddress());// 输出连接者的IP。
             System.out.println("成功连接服务器");
             // while (true) {
             osw = new OutputStreamWriter(client_.socket.getOutputStream());
             bw = new BufferedWriter(osw);
             //测试内容
-//            String mes_7 = client_.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
-//            String mes_1= client_.m1(ID_c, client_.ID_tgs, client_.TS, IPs,IPr);
-//            String mes_23a= client_.m23a("00",ID_c,2317,3071,IPs,IPr);
+            String mes_7 = client_.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
+            String mes_1= client_.m1(ID_c, client_.ID_tgs, client_.TS, IPs,IPr);
+            String mes_23a= client_.m23a("00",ID_c,2317,3071,IPs,IPr);
 //            str = in.nextLine();
             bw.write("mes");
             bw.flush();
-//            isr = new InputStreamReader(client_tgs.socket.getInputStream());
-//            br = new BufferedReader(isr);
-//            String rec="";
-//            int c;
-//                if((rec= br.readLine())!=null) {
-//                    client_tgs.ToAS.textArea3.setText(rec);
-//                    System.out.print("回复:" + rec);//收到消息
-//                    String bas[] = client_tgs.Divide(rec);
-//                    String rec_d[] = client_tgs.m8_d(rec, 2371, 3071);
-//                    client_tgs.mes_display(bas, rec_d, client_tgs.ToAS);
-//                    System.out.println(client_tgs.socket.getInetAddress() + " : " + rec_d);
-//                }
+            isr = new InputStreamReader(client_.socket.getInputStream());
+            br = new BufferedReader(isr);
+            String rec="";
+            int c;
+
+                if((rec= br.readLine())!=null) {
+//                    client_.ToAS.textArea3.setText(rec);
+                    System.out.print("回复:" + rec);//收到消息
+                    String bas[] = client_.Divide(rec);
+                    String rec_d[] = client_.m8_d(rec, 2371, 3071);
+//                    client_t.mes_display(bas, rec_d, client_tgs.ToAS);
+                    System.out.println(client_.socket.getInetAddress() + " : " + rec_d);
+                }
             //测试内容结束
             //  }
             while (true) {
