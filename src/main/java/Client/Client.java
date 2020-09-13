@@ -208,8 +208,8 @@ public class Client extends Message {
                 Kc_tgs = data[3];
                 TGT = data[4];
                 //C->TGS  发送3号请求TGS登陆验证
-                TS = Tools.getTS();
-                String c_to_tgs = m3(ID_v, TGT, ID_c, C_IP, TS, Kc_tgs, C_IP, TGS_IP);
+               // TS = Tools.getTS();
+              //  String c_to_tgs = m3(ID_v, TGT, ID_c, C_IP, TS, Kc_tgs, C_IP, TGS_IP);
                 //packSend(socket,c_to_tgs);发给tgs
                 return true;
             }
@@ -217,7 +217,7 @@ public class Client extends Message {
                 data = m4_d(Basic_info[6], Kc_tgs);
                 ST = data[3];
                 TS = Tools.getTS();
-                String to_ser = m5(ST, ID_c, C_IP, TS, Kc_v, C_IP, V_IP);
+               // String to_ser = m5(ST, ID_c, C_IP, TS, Kc_v, C_IP, V_IP);
                 //C->ser  连接
                 //packSend(socket,to_ser);//发给ser
                 return true;
