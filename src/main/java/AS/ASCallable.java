@@ -1,5 +1,7 @@
 package AS;
 
+import javafx.scene.layout.Pane;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -80,7 +82,8 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
                 if ((inf = bufferedReader.read()) != -1) {
                     rec_package = (char) inf + bufferedReader.readLine();//message
                     System.out.println("Received a messege from " + addr.getHostAddress());
-                    Panel.textArea4.setText(rec_package);//显示收到的包
+                    Panel.textArea4.append(rec_package);//显示收到的包
+                    //Panel.textArea4.paintImmediately(Panel.textArea4.getBounds());
                     ASexcecution(rec_package);
                 }
             }
@@ -123,7 +126,9 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
         for (int i = 0; i < mes.length; i++) {
             bas += mes[i] + "\n";
         }
-        this_panel.textArea5.setText(bas);
+        this_panel.textArea5.append(bas);
+        Panel.textArea5.paintImmediately(Panel.textArea5.getBounds());
+
     }
 
     public void ASexcecution(String rec_package) throws IOException {

@@ -17,32 +17,19 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
     private String TS;
     private String ID_tgs;
     private String LT;
-    private int tgs_pk;
-    private int tgs_n;
     private SerPanel Panel;
     private Tools tools;
-    private String TGS_IP;
-    public BufferedReader tgs_br;
-    public BufferedWriter tgs_bw;
-    private SerPanel ToTgsPanel;
-    public TGSCallable(ServerSocket Socket, Socket the_socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter, SerPanel tgsP) throws IOException {
+
+    public TGSCallable(Socket Socket) throws IOException {
         tools = new Tools();
-        this.socket = the_socket;
-        rsa_n = 151;
-        rsa_pk = 359;
-        rsa_sk = 667;
-        Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,socket,false);
+        this.socket = Socket;
+        rsa_n = 1147;
+        rsa_pk = 643;
+        rsa_sk = 907;
+        Panel = new SerPanel("TGS",rsa_pk,rsa_sk,rsa_n,socket,false);
         AS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";
-        tgs_n = 1679;
-        tgs_pk = 775;
-        //   so_tgs=socket_TGS;
-        tgs_br = bufferedReader;
-        tgs_bw = bufferedWriter;
-        ToTgsPanel = tgsP;
-
-
     }
 
     public void setTS(String tsN) {
@@ -64,22 +51,8 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {//信息输入
             packSend(socket, "[Connected....Waiting for action.....]");
             while (true) {
-                //监听TGS
-                int inf_tgs;
-                String tgs_package = "";
-                if ((inf_tgs = tgs_br.read()) != -1) {
-                    do {
-//                  String recTgs_Package=tgs_br.readLine();//tgs mes
-                        tgs_package += (char) inf_tgs;
-                    }
-                    while ((inf_tgs = tgs_br.read()) != -1);
-                    String Basic_tgs_info[] = Divide(tgs_package);
-                    String data[] = m16_d(Basic_tgs_info[6], rsa_sk, rsa_n);//IDc,TS4
-                    setTS(data[1]);
-                    ToTgsPanel.textArea4.setText(tgs_package);
-                    mes_display(Basic_tgs_info, data, ToTgsPanel);
-                }
-                //收到后的设置显示收到的报文
+
+                //收到后的
                 int inf;
                 String rec_package = "";
                 if ((inf = bufferedReader.read()) != -1) {
@@ -90,13 +63,6 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
                 }
             }
             //Panel.textArea5.setText();显示解码的包
-
-//            String ar[] = m2_d(inf[6], Kc);
-//            String example = "";
-//            for (int i = 0; i < ar.length; i++) {
-//                System.out.println(ar[i]);
-//                example += ar[i] + "#";
-//            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -126,7 +92,7 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
         bas = bas + "保留字段：" + Basic[5] + "\n";
         bas = bas + "数据内容：" + "\n";
         for (int i = 0; i < mes.length; i++) {
-            bas = mes[i] + "\n";
+            bas += mes[i] + "\n";
         }
         this_panel.textArea5.setText(bas);
     }
@@ -135,25 +101,14 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
         String Basic_info[] = Divide(rec_package);
         String data[];
         switch (Basic_info[1]) {//IPr Basic_info[3]
-            case "1": {//Client发起请求
+            case "3": {//C->TGS请求，需要回复4号报文
 
 
                 break;
             }
-            case "7": {//Client的注册请求
-
-
-                break;
-
-            }
-//            case "16": {//TGS的时间戳同步
-//
-//            }
-            case "0": {//Client的离线请求
-
+            case "15": {//AS->TGS
                 break;
             }
-
         }
 
     }

@@ -19,24 +19,23 @@ public class TGS extends Message implements RSA, DES {
 //    String divided[] = {filed,type,IPs,IPr,len,retain,data};
 
     public TGS() throws IOException {
-        rsa_n =151;
-        rsa_pk=359;
-        rsa_sk=667;
+        rsa_n =1147;
+        rsa_pk=643;
+        rsa_sk=907;
         this.server_TGS= new ServerSocket(port_TGS);
       //  ToTgsPanel= new SerPanel("AS-TGS",rsa_pk,rsa_sk,rsa_n,server_TGS,true);
     }
 
-    public void AS_start(){
+    public void TGS_start(){
             try {
                 ServerSocket server= new ServerSocket(port);
                 InputStreamReader tgs_StreamReader = new InputStreamReader(server_TGS.accept().getInputStream());
                 BufferedReader tgs_bufferedReader = new BufferedReader(tgs_StreamReader);
                 OutputStreamWriter tgs_StreamWriter = new OutputStreamWriter(server_TGS.accept().getOutputStream());
                 BufferedWriter tgs_bufferedWriter = new BufferedWriter(tgs_StreamWriter);
-                ToTgsPanel.run();
                 while (true) {
                     Socket socket=server.accept();
-                    TGSCallable task = new TGSCallable(server,socket,tgs_bufferedReader,tgs_bufferedWriter,ToTgsPanel);
+                    TGSCallable task = new TGSCallable(socket);
                     try{
                         serviceThread.submit(task);
                     }catch (Exception e){
@@ -46,7 +45,6 @@ public class TGS extends Message implements RSA, DES {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-      //  asPanel.run(rsa_pk,rsa_sk,rsa_n);
     }
 
 //    public static void main(String[] args) throws IOException {

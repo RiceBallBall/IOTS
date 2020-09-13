@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 
-public class SerPanel extends WindowAdapter{
+public class SerPanel extends WindowAdapter implements Runnable {
     public JPanel panel = new JPanel();
     private JLabel label = new JLabel("公钥:");
     private JLabel label8 = new JLabel("N:");
@@ -46,9 +46,10 @@ public class SerPanel extends WindowAdapter{
         textField.setText(String.valueOf(pk));
         textField1.setText(String.valueOf(sk));
         textField8.setText(String.valueOf(n));
-        this.the_socket=socket;
-        tgs=tgs_;
+        this.the_socket = socket;
+        tgs = tgs_;
     }
+
     private void placeComponents1() {
         panel.setLayout(null);
 
@@ -105,16 +106,24 @@ public class SerPanel extends WindowAdapter{
     public void run() {
     }
 
-    public void windowClosing(WindowEvent windowEvent) {
-        try {
-            this.the_socket.close();
-            System.out.println("[Disconnected...]");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(tgs){
-        System.exit(0);}
-    }
+//    public void windowClosing(WindowEvent windowEvent) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    the_socket.close();
+//                    System.out.println("[Disconnected...]");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                if (tgs) {
+//                }
+//                System.exit(0);
+//            }
+//        }).start();
+//
+//
+//    }
 
 //    public static void main(String[] args) {
 //        ASPanel asPanel = new ASPanel("AS端");
