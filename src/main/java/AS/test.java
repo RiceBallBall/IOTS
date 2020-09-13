@@ -16,13 +16,18 @@ public class test extends Message {
         int pk =1129,n=1517,sk=389;
         test t = new test();
         int [] rsa=RSA.rsa();
+String ST=t.ST("12345678","ID000001","192169001001","ser000001",2501,4550,"20000101101010","60");
     //    String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,rec[3],rec[2]);
-        String mes = t.m7(ID1, k, rsa[3] ,rsa[2], AD, AD);
+        String mes = t.m5(ST,"IDC00001","123456789012",Tools.getTS(),"12345678","192123001001","123145167167");
         System.out.println(mes);
-        System.out.println("------------------");
-               System.out.println(t.verify_m(mes));
         String inf[] = t.Divide(mes);
-        String data[] = t.m7_d(inf[6], rsa[4],rsa[2]);
+        System.out.println("ST:"+ST.length());
+       // String f[]=t.ST_d(ST,1997,4559);
+        System.out.println(t.verify_m(mes));
+        String data[] = t.m5_d(inf[6],"12345678");
+//        for (int i = 0; i < f.length; i++) {
+//            System.out.println(f[i]);
+//        }
         for (int i = 0; i < inf.length; i++) {
             System.out.println(inf[i]);
         }

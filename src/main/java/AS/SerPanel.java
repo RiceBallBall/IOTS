@@ -2,8 +2,6 @@ package AS;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.ServerSocket;
 
 
@@ -16,8 +14,6 @@ public class SerPanel extends WindowAdapter implements Runnable {
     private JLabel label3 = new JLabel("发送包内容:");
     private JLabel label4 = new JLabel("收到包内容:");
     private JLabel label5 = new JLabel("收到包明文:");
-
-
     private JTextField textField = new JTextField();
     private JPasswordField textField1 = new JPasswordField(20);
     public JTextArea textArea3 = new JTextArea();
@@ -25,7 +21,6 @@ public class SerPanel extends WindowAdapter implements Runnable {
     public JTextArea textArea5 = new JTextArea();
     public JTextArea textArea2 = new JTextArea();
     public JTextField textField8 = new JTextField();
-
     JScrollPane scrollPane_1 = new JScrollPane();
     JScrollPane scrollPane_2 = new JScrollPane();
     JScrollPane scrollPane_3 = new JScrollPane();

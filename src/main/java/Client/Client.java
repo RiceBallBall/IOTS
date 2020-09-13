@@ -1,9 +1,8 @@
-package AS;
+package Client;
 
 
 import TGS.Message;
 import TGS.SerPanel;
-import TGS.TGS;
 import TGS.Tools;
 
 import java.io.BufferedReader;
@@ -35,6 +34,8 @@ public class Client extends Message {
     private int as_n;
     private int tgs_pk;
     private int tgs_n;
+    private int v_pk;
+    private int v_n;
     private String K_c;
     private String Kc_v;
     public String Kc_tgs;
@@ -48,23 +49,29 @@ public class Client extends Message {
         ID_tgs = "TGS00001";
         ID_as = "as000001";
         ID_v = "ser00001";
+        ID_c = "IDc000001";
         tgs_pk = 121;
         tgs_n = 1679;
         as_pk = 2317;
         as_n = 3071;
+        v_pk = 2501;
+        v_n = 4559;
         as_port = 8888;
         tgs_port = 4444;
         ser_port = 8888;
+
         C_IP = "192168002001";
         AS_IP = "127001001001";
         TGS_IP = "127001001001";
         V_IP = "192168000000";
-        AD_as = "192.168.0.0";
+        AD_as = "";
         AD_ser = "";
         AD_tgs = "";
-        socket = new Socket(AS_IP, 8888);
+        socket = new Socket("172.20.10.3", 9999);
         TS = Tools.getTS();
         Kc_tgs = "";
+        LT1="60";
+
         // ToAS = new SerPanel("TGS", tgs_pk, tgs_sk, tgs_n, socket, true);
     }
 
@@ -72,9 +79,12 @@ public class Client extends Message {
         TS = tsN;
         return;
     }
+    public void setK_c(String kc){
+        K_c=kc;
+    }
 
     public static void main(String[] args) throws IOException {
-        Client client_ = new Client();
+        Client client = new Client();
         InputStreamReader isr;
         BufferedReader br;
         OutputStreamWriter osw;
@@ -86,35 +96,54 @@ public class Client extends Message {
 
         try {
 
-            //  Socket socket = new Socket("localhost", 8888);
-            //  System.out.println(socket.getInetAddress());// 输出连接者的IP。
-            System.out.println("成功连接服务器");
-            // while (true) {
-            osw = new OutputStreamWriter(client_.socket.getOutputStream());
+              Socket socket = new Socket("172.20.10.3", 9999);
+              System.out.println(socket.getInetAddress());// 输出连接者的IP。
+//             while (true) {
+            osw = new OutputStreamWriter(client.socket.getOutputStream());
             bw = new BufferedWriter(osw);
             //测试内容
-            String mes_7 = client_.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
-            String mes_1= client_.m1(ID_c, client_.ID_tgs, client_.TS, IPs,IPr);
-            String mes_23a= client_.m23a("00",ID_c,2317,3071,IPs,IPr);
+            String mes_7 = client.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
+            String mes_1= client.m1(ID_c, client.ID_tgs, client.TS, IPs,IPr);
+            String mes_23a= client.m23a("00",ID_c,2317,3071,IPs,IPr);
+            client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
+            String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
 //            str = in.nextLine();
-            bw.write("mes");
-            bw.flush();
-            isr = new InputStreamReader(client_.socket.getInputStream());
-            br = new BufferedReader(isr);
-            String rec="";
-            int c;
 
-                if((rec= br.readLine())!=null) {
-//                    client_.ToAS.textArea3.setText(rec);
-                    System.out.print("回复:" + rec);//收到消息
-                    String bas[] = client_.Divide(rec);
-                    String rec_d[] = client_.m8_d(rec, 2371, 3071);
-//                    client_t.mes_display(bas, rec_d, client_tgs.ToAS);
-                    System.out.println(client_.socket.getInetAddress() + " : " + rec_d);
-                }
+            bw.write("mes");
+            System.out.println("ST:");
+            String di[]=client.Divide(mes_5);
+            String a[]=client.ST_d(client.ST,1997, 4559);
+            for(int i=0;i<a.length;i++){
+           System.out.println(a[i]);
+            }
+            System.out.println("================");
+            System.out.println("M5:");
+            String b[]=client.m5_d(di[6],"12345678");
+            for(int i=0;i<b.length;i++){
+                System.out.println(b[i]);
+            }
+            System.out.println("================");
+
+            System.out.println("");
+            bw.flush();
+            socket.shutdownOutput();
+//            isr = new InputStreamReader(client.socket.getInputStream());
+//            br = new BufferedReader(isr);
+//            String rec="";
+//            int c;
+//
+//                if((rec= br.readLine())!=null) {
+////                    client_.ToAS.textArea3.setText(rec);
+//                    System.out.print("回复:" + rec);//收到消息
+//                    String bas[] = client.Divide(rec);
+//                    String rec_d[] = client.m8_d(rec, 2371, 3071);
+////                    client_t.mes_display(bas, rec_d, client_tgs.ToAS);
+//                    System.out.println(client.socket.getInetAddress() + " : " + rec_d);
+//                }
             //测试内容结束
             //  }
             while (true) {
+
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -150,7 +179,7 @@ public class Client extends Message {
         return true;
     }
 
-    public void Clientexcecution(String Package) {
+    public boolean Clientexcecution(String Package) {
         String data[];
         String Basic_info[] = Divide(Package);
         switch (Basic_info[1]) {
@@ -163,69 +192,92 @@ public class Client extends Message {
                 if (feedback.equals("11")) {//反馈正确,进行注册操作
                     //UI弹窗
                     System.out.println("注册成功,进行登陆操作");
+                    return true;
                 } else if (feedback.equals("00")) {//反馈失败,拒绝注册
                     //UI弹窗
                     System.out.println("申请失败,无法进行注册");
+                    return false;
                 }
-                break;
             }
             case "2": {//登陆验证成功
                 //C->AS  发送1号请求AS登陆验证
                 setTS(Tools.getTS());//获取时间戳
-                packSend(socket, m1(ID_c, ID_tgs, TS, C_IP, AS_IP));//发送报文
+                // packSend(socket, m1(ID_c, ID_tgs, TS, C_IP, AS_IP));//发送报文
                 //AS->C  验证成功反馈2号
                 data = m2_d(Basic_info[6], ID_c);
-//                TS = data[1];
-//                LT1 = data[2];
                 Kc_tgs = data[3];
                 TGT = data[4];
                 //C->TGS  发送3号请求TGS登陆验证
                 TS = Tools.getTS();
                 String c_to_tgs = m3(ID_v, TGT, ID_c, C_IP, TS, Kc_tgs, C_IP, TGS_IP);
                 //packSend(socket,c_to_tgs);发给tgs
-                break;
+                return true;
             }
             case "4": {//TGS->C身份认证成功
                 data = m4_d(Basic_info[6], Kc_tgs);
                 ST = data[3];
                 TS = Tools.getTS();
                 String to_ser = m5(ST, ID_c, C_IP, TS, Kc_v, C_IP, V_IP);
+                //C->ser  连接
                 //packSend(socket,to_ser);//发给ser
-                break;
+                return true;
             }
             case "6": {//TGS->C身份认证成功
                 data = m6_d(Basic_info[6], Kc_v);
-                break;
+                //ui跳转功能界面（上传下载删除推出）
+                return true;
             }
             case "18": {//TGS->C身分验证失败
                 data = m18_d(Basic_info[6], tgs_pk, tgs_n);
                 //UI操作插入
                 System.out.println("TGS身份验证失败,无法登录");
-                break;
+                return false;
             }
             case "17": {//登陆验证失败
                 data = m17_d(Basic_info[6], as_pk, as_n);
                 //UI操作插入
                 System.out.println("AS验证失败,无法登陆");
+                return false;
             }
 
             case "19": {//S->C 认证反馈失败
-                //TGS->C身份认证成功
                 data = m19_d(Basic_info[6], Kc_v);
                 //UI操作插入
                 System.out.println("Server验证失败,无法登陆");
+                return false;
             }
             case "22": {//S->C 删除结果
-                //TGS->C身份认证成功
                 data = m22_d(Basic_info[6], Kc_tgs);
+                String feedback = data[1];
+                if (feedback.equals("11")) {
+                    //UI弹窗
+                    System.out.println("删除成功");
+                    return true;
+                } else if (feedback.equals("00")) {
+                    //UI弹窗
+                    System.out.println("删除失败");
+                    return false;
+                }
                 //UI操作插入
+
             }
             case "24": {//S->C 离线反馈
                 //TGS->C身份认证成功
                 data = m24_d(Basic_info[6], Kc_tgs);
+                String feedback = data[1];
+                if (feedback.equals("11")) {
+                    //UI弹窗
+                    System.out.println("离线失败");
+                    return true;
+                } else if (feedback.equals("00")) {
+                    //UI弹窗
+                    System.out.println("离线失败");
+                    return false;
+                }
                 //UI操作插入
             }
         }
+        return false;
     }
 
     public void ClientAction(String type, Socket socket) {
@@ -249,7 +301,7 @@ public class Client extends Message {
                 packSend(socket, mes_sen);
                 break;
             }
-            case "8": {
+            case "7": {
                 //K_c从UI获取
                 mes_sen = m7(ID_c, K_c, as_pk, as_n, C_IP, AS_IP);
                 packSend(socket, mes_sen);
@@ -258,7 +310,6 @@ public class Client extends Message {
             case "9": {
                 mes_sen = m9(Kc_v, C_IP, V_IP);
                 packSend(socket, mes_sen);
-
                 break;
             }
             case "11": {

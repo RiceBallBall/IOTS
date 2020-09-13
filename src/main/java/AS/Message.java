@@ -129,8 +129,8 @@ public abstract class Message implements DES,RSA  {
     }
     public String[] m5_d(String data,String Kc_v){
         String info[]=new String[4];
-        info[0]=data.substring(0,512);//ST
-        String decoded=DES.decode(Kc_v,data.substring(512));
+        info[0]=data.substring(0,944);//ST
+        String decoded=DES.decode(Kc_v,data.substring(944));
         info[1]=decoded.substring(0,8);//IDc
         info[2]=decoded.substring(8,20);//ADc
         info[3]=decoded.substring(20,34);//TS5
