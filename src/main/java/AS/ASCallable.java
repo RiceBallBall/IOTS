@@ -31,15 +31,12 @@ class ASCallable extends Message implements Callable<Boolean>, DES {
         rsa_n =3071;
         rsa_pk=2317;
         rsa_sk=781;
-        Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket,false);
+        Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket);
         AS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";
         tgs_n = 1679;
         tgs_pk = 775;
-        //   so_tgs=socket_TGS;
-       // ToTgsPanel = tgsP;
-        System.out.println("thread");
 
     }
 

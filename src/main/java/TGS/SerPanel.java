@@ -35,7 +35,7 @@ public class SerPanel extends WindowAdapter{
     public Boolean tgs;
 
 
-    public SerPanel(String Name, int pk, int sk, int n, Socket socket, boolean tgs_) {
+    public SerPanel(String Name, int pk, int sk, int n, Socket socket) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -48,7 +48,6 @@ public class SerPanel extends WindowAdapter{
         textField1.setText(String.valueOf(sk));
         textField8.setText(String.valueOf(n));
         this.the_socket=socket;
-        tgs=tgs_;
     }
     private void placeComponents1() {
         panel.setLayout(null);
@@ -106,16 +105,6 @@ public class SerPanel extends WindowAdapter{
     public void run() {
     }
 
-    public void windowClosing(WindowEvent windowEvent) {
-        try {
-            this.the_socket.close();
-            System.out.println("[Disconnected...]");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(tgs){
-        System.exit(0);}
-    }
 
 //    public static void main(String[] args) {
 //        ASPanel asPanel = new ASPanel("AS端");

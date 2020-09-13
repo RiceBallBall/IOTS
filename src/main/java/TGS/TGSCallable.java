@@ -10,15 +10,18 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
     private int rsa_pk;
     private int rsa_sk;
     private int rsa_n;
+    private int ser_pk;
+    private int ser_n;
     private String Kc = "ID000002";
     private String ID_c;
     private Socket socket = null;
-    private String AS_IP;
+    private String TGS_IP;
     private String TS;
     private String ID_tgs;
     private String LT;
     private SerPanel Panel;
     private Tools tools;
+
 
     public TGSCallable(Socket Socket) throws IOException {
         tools = new Tools();
@@ -26,8 +29,10 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
         rsa_n = 1147;
         rsa_pk = 643;
         rsa_sk = 907;
-        Panel = new SerPanel("TGS",rsa_pk,rsa_sk,rsa_n,socket,false);
-        AS_IP = "192168043188";
+        ser_n=4459;
+        ser_pk=2501;
+        Panel = new SerPanel("TGS",rsa_pk,rsa_sk,rsa_n,socket);
+        TGS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";
     }
@@ -102,11 +107,22 @@ class TGSCallable extends Message implements Callable<Boolean>, DES {
         String data[];
         switch (Basic_info[1]) {//IPr Basic_info[3]
             case "3": {//C->TGS请求，需要回复4号报文
-
-
+                data=m3_d(Basic_info[6],rsa_sk,rsa_n);
+                String reply;
+                if (data==null){
+                    reply=m18("00",rsa_sk,rsa_n,TGS_IP,Basic_info[3]);
+                }else {
+                    String Kc_v="12345678";
+                    String st=ST(Kc_v,data[2],Basic_info[3],data[0],ser_pk,ser_n,TS,LT);
+                    reply=m4(Kc_v,data[0],TS,st,data[5],TGS_IP,Basic_info[3]);
+                }
+                mes_display(Basic_info,data,Panel);
+                packSend(socket,reply);
                 break;
             }
             case "15": {//AS->TGS
+                data=m15_d(Basic_info[6],rsa_sk,rsa_n);
+
                 break;
             }
         }

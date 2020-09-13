@@ -13,7 +13,6 @@ public class TGS extends Message implements RSA, DES {
     private int rsa_pk;
     private int rsa_sk;
     private int rsa_n;
-    private SerPanel ToTgsPanel;
     private static int port_TGS=4444;
     ServerSocket server_TGS;
 //    String divided[] = {filed,type,IPs,IPr,len,retain,data};
@@ -29,10 +28,6 @@ public class TGS extends Message implements RSA, DES {
     public void TGS_start(){
             try {
                 ServerSocket server= new ServerSocket(port);
-                InputStreamReader tgs_StreamReader = new InputStreamReader(server_TGS.accept().getInputStream());
-                BufferedReader tgs_bufferedReader = new BufferedReader(tgs_StreamReader);
-                OutputStreamWriter tgs_StreamWriter = new OutputStreamWriter(server_TGS.accept().getOutputStream());
-                BufferedWriter tgs_bufferedWriter = new BufferedWriter(tgs_StreamWriter);
                 while (true) {
                     Socket socket=server.accept();
                     TGSCallable task = new TGSCallable(socket);
@@ -47,9 +42,9 @@ public class TGS extends Message implements RSA, DES {
             }
     }
 
-//    public static void main(String[] args) throws IOException {
-//        AS as=new AS();
-////        ASPanel asPanel=new ASPanel("AS");
-//        as.AS_start();
-//    }
+    public static void main(String[] args) throws IOException {
+        TGS tgs=new TGS();
+//        Panel asPanel=new ASPanel("AS");
+        tgs.TGS_start();
+    }
 }

@@ -68,15 +68,18 @@ public abstract class Message implements DES,RSA  {
         message=message+ver;
         return message;
     }
-    public String[] m3_d(String data,String Kc_tgs){
+    public String[] m3_d(String data,int sk,int n){
         String info[]=new String[5];
         info[0]=data.substring(0,8);//IDv
         info[1]=data.substring(8,936);//TGT
+        String tgt[]=TGT_d(data,sk,n);//查找数据库验证存在则返回解密结果，不存在则返回空
+//        String x[]=null;
         String encoded=data.substring(936);
-        String decodes=DES.decode(Kc_tgs,encoded);
+        String decodes=DES.decode(tgt[0],encoded);
         info[2]=decodes.substring(0,8);//IDc
         info[3]=data.substring(8,16);//ADc
         info[4]=data.substring(16,30);//TS3
+        info[5]=tgt[0];//KC_tgs
         return info;
     }
 

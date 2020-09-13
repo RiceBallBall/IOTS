@@ -34,7 +34,7 @@ public class SerPanel extends WindowAdapter implements Runnable {
     public Boolean tgs;
 
 
-    public SerPanel(String Name, int pk, int sk, int n, ServerSocket socket, boolean tgs_) {
+    public SerPanel(String Name, int pk, int sk, int n, ServerSocket socket) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -47,7 +47,6 @@ public class SerPanel extends WindowAdapter implements Runnable {
         textField1.setText(String.valueOf(sk));
         textField8.setText(String.valueOf(n));
         this.the_socket = socket;
-        tgs = tgs_;
     }
 
     private void placeComponents1() {
