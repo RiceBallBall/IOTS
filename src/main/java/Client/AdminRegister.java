@@ -1,11 +1,8 @@
 package Client;
 
-import sun.java2d.pipe.SpanClipRenderer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.Socket;
-import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

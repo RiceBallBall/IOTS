@@ -5,11 +5,7 @@ import TGS.Message;
 import TGS.SerPanel;
 import TGS.Tools;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class Client extends Message {
@@ -49,7 +45,7 @@ public class Client extends Message {
         ID_tgs = "TGS00001";
         ID_as = "as000001";
         ID_v = "ser00001";
-        ID_c = "IDc000001";
+        ID_c = "IDc00001";
         tgs_pk = 121;
         tgs_n = 1679;
         as_pk = 2317;
@@ -85,22 +81,16 @@ public class Client extends Message {
 
     public static void main(String[] args) throws IOException {
         Client client = new Client();
-        InputStreamReader isr;
-        BufferedReader br;
-        OutputStreamWriter osw;
-        BufferedWriter bw;
         String ID_c = "ID000001";
         String K_c = "12345678";
         String IPs = "192168001001";
         String IPr = "127010001001";
-
         try {
 
               Socket socket = new Socket("172.20.10.3", 9999);
               System.out.println(socket.getInetAddress());// 输出连接者的IP。
+            PrintWriter writer=new PrintWriter(socket.getOutputStream());
 //             while (true) {
-            osw = new OutputStreamWriter(client.socket.getOutputStream());
-            bw = new BufferedWriter(osw);
             //测试内容
             String mes_7 = client.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
             String mes_1= client.m1(ID_c, client.ID_tgs, client.TS, IPs,IPr);
@@ -109,8 +99,10 @@ public class Client extends Message {
             String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
 //            str = in.nextLine();
 
-            bw.write("mes");
-            System.out.println("ST:");
+            writer.println("mes");
+            writer.flush();
+            // socket.shutdownOutput();
+            System.out.println("ST:"+client.ST.length());
             String di[]=client.Divide(mes_5);
             String a[]=client.ST_d(client.ST,1997, 4559);
             for(int i=0;i<a.length;i++){
@@ -123,23 +115,23 @@ public class Client extends Message {
                 System.out.println(b[i]);
             }
             System.out.println("================");
+            System.out.println("shut...");
+//            InputStreamReader isr = new InputStreamReader(client.socket.getInputStream());
+//            BufferedReader br = new BufferedReader(isr);
+            String rec="";
+            int c;
 
-            System.out.println("");
-            bw.flush();
-            socket.shutdownOutput();
-//            isr = new InputStreamReader(client.socket.getInputStream());
-//            br = new BufferedReader(isr);
-//            String rec="";
-//            int c;
-//
 //                if((rec= br.readLine())!=null) {
 ////                    client_.ToAS.textArea3.setText(rec);
 //                    System.out.print("回复:" + rec);//收到消息
-//                    String bas[] = client.Divide(rec);
-//                    String rec_d[] = client.m8_d(rec, 2371, 3071);
+////                    String bas[] = client.Divide(rec);
+////                    String rec_d[] = client.m8_d(rec, 2371, 3071);
 ////                    client_t.mes_display(bas, rec_d, client_tgs.ToAS);
-//                    System.out.println(client.socket.getInetAddress() + " : " + rec_d);
+//                    System.out.println(client.socket.getInetAddress() + " : " + rec);
 //                }
+//            if((c=br.read())!=-1){
+//                +(char)c;
+//            }
             //测试内容结束
             //  }
             while (true) {
@@ -207,19 +199,12 @@ public class Client extends Message {
                 data = m2_d(Basic_info[6], ID_c);
                 Kc_tgs = data[3];
                 TGT = data[4];
-                //C->TGS  发送3号请求TGS登陆验证
-               // TS = Tools.getTS();
-              //  String c_to_tgs = m3(ID_v, TGT, ID_c, C_IP, TS, Kc_tgs, C_IP, TGS_IP);
-                //packSend(socket,c_to_tgs);发给tgs
                 return true;
             }
             case "4": {//TGS->C身份认证成功
                 data = m4_d(Basic_info[6], Kc_tgs);
                 ST = data[3];
                 TS = Tools.getTS();
-               // String to_ser = m5(ST, ID_c, C_IP, TS, Kc_v, C_IP, V_IP);
-                //C->ser  连接
-                //packSend(socket,to_ser);//发给ser
                 return true;
             }
             case "6": {//TGS->C身份认证成功

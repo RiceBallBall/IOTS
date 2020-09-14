@@ -1,7 +1,7 @@
 package Client;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
+import AS.Admin;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -116,33 +115,33 @@ public class Login_Register {
 //                }
 
             //创建一个Admin用户，把输入框中的用户名密码和提出来
-            Admin admin = new Admin();
-                admin.setID(ID);
-                admin.setPassword(passwd);
-
-            //登录
-            Login login = new Login();
-                login.setAdmin(admin);
-
-                if(login.JudgeAdmin()==0)
-
-            {
-                //弹出账号或密码错误的窗口
-                JOptionPane.showMessageDialog(null, "账号或密码错误", "账号或密码错误", JOptionPane.WARNING_MESSAGE);
-                //清除密码框中的信息
-                password.setText("");
-                //清除账号框中的信息
-                userID.setText("");
-
-                //System.out.println("登陆失败");
-            } else
-
-            {
-                //弹出登录成功的窗口
-                JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
-                //点击确定后会跳转到主窗口
-                frame.setVisible(false);
-            }
+//            Admin admin = new Admin();
+//                admin.setID(ID);
+//                admin.setPassword(passwd);
+//
+//            //登录
+//            Admin.Login login = new Admin.Login();
+//                login.setAdmin(admin);
+//
+//                if(login.JudgeAdmin()==0)
+//
+//            {
+//                //弹出账号或密码错误的窗口
+//                JOptionPane.showMessageDialog(null, "账号或密码错误", "账号或密码错误", JOptionPane.WARNING_MESSAGE);
+//                //清除密码框中的信息
+//                password.setText("");
+//                //清除账号框中的信息
+//                userID.setText("");
+//
+//                //System.out.println("登陆失败");
+//            } else
+//
+//            {
+//                //弹出登录成功的窗口
+//                JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
+//                //点击确定后会跳转到主窗口
+//                frame.setVisible(false);
+//            }
         }
     });
 

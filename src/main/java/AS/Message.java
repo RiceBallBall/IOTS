@@ -103,6 +103,7 @@ public abstract class Message implements DES,RSA  {
 
     public String ST(String Kc_v, String ID_c, String AD_c,String IDv, int pk,int n, String TS4, String lifetime2) {
         String message = RSA.encode(Kc_v+ID_c+AD_c+IDv+TS4+DemitoBin(lifetime2),pk,n);
+        System.out.println("len:"+message.length());
  //      message=DES.decode(IDv,message);
         return message;
     }
@@ -129,8 +130,8 @@ public abstract class Message implements DES,RSA  {
     }
     public String[] m5_d(String data,String Kc_v){
         String info[]=new String[4];
-        info[0]=data.substring(0,944);//ST
-        String decoded=DES.decode(Kc_v,data.substring(944));
+        info[0]=data.substring(0,928);//ST
+        String decoded=DES.decode(Kc_v,data.substring(928));
         info[1]=decoded.substring(0,8);//IDc
         info[2]=decoded.substring(8,20);//ADc
         info[3]=decoded.substring(20,34);//TS5
