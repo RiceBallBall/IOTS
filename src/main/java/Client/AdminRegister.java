@@ -4,10 +4,15 @@ package Client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import javax.swing.*;
 
 public class AdminRegister {
+    String AS_IP = "";
     AdminRegister(ServerClient myClient, Socket mysocket) {
         socket=mysocket;
         init();
@@ -71,13 +76,24 @@ public class AdminRegister {
                 client. setK_c(new String(password.getPassword()));
 //                String confrimpasswd = new String(confrimPassword.getPassword());
 //                socket连接AS
+                String pack ="";
+                try {
+                    socket.connect(new InetSocketAddress(AS_IP, 8888), 10000);
+                    client.ClientAction("1", socket);
+                    InputStreamReader inputStreamReader = null;
+                    inputStreamReader = new InputStreamReader(socket.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    pack=bufferedReader.readLine();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 client.ClientAction("7",socket);
 //                监听得到AS的反馈
-                String pack="";
                 boolean j= client.verify_m(pack);
-                if (j){
-                client.Clientexcecution(pack);
-                     }else{
+                while (!j){
+                    client.ClientAction("7",socket);
+                    j= client.verify_m(pack);
+                     }
                     boolean fb=client.Clientexcecution(pack);
                 if(fb){
                     frame.setVisible(false);
@@ -105,8 +121,6 @@ public class AdminRegister {
 //                    }
 
 
-            }
-
-        });
+            });
     }
 }

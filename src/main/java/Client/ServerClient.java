@@ -84,22 +84,30 @@ public class ServerClient extends Message {
         String IPr = "127010001001";
         Socket socket = new Socket();
         ServerClient client=new ServerClient(socket);
-        socket.connect(new InetSocketAddress("172.20.10.3", 9999), 10000);
+        socket.connect(new InetSocketAddress("192.168.43.3", 9999), 10000);
         // socket.setSoTimeout(10000);//设置超时时间
         PrintWriter writer=new PrintWriter(socket.getOutputStream());
         InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-//        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
-//        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
-        String clientMessage = "";
-        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
-        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
-        writer.println(mes_5);
+////        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
+////        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
+//        String clientMessage = "";
+//     //   client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
+//   //     String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
+//        String mes_9=client.m9("12345678",client.C_IP,client.V_IP);
+//        String mes_11=client.m11("1.txt","1","0","000000001111","12345678",client.C_IP,client.V_IP);
+//        String mes_13=client.m13("1.txt","12345678", client.C_IP, client.V_IP);
+//        String mes_20=client.m20("1.txt","12345678",client.C_IP,client.V_IP);
+//        String mes_23=client.m23s("11",ID_c,"12345678",client.C_IP,client.V_IP);
+
+
+//        writer.println(mes_23);
         writer.flush();
-        writer.close();
-        clientMessage = bufferedReader.readLine();
-        System.out.println(clientMessage);
+//        //writer.close();
+//        clientMessage = bufferedReader.readLine();
+//        System.out.println(clientMessage);
+
         while (true){
 
         }
@@ -121,10 +129,8 @@ public class ServerClient extends Message {
 
     public boolean packSend(Socket socket, String sen_package) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-            bufferedWriter.write(sen_package);
-            bufferedWriter.flush();
+            PrintWriter writer=new PrintWriter(socket.getOutputStream());
+            writer.println(sen_package);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
