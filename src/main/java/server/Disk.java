@@ -1,7 +1,7 @@
-package netDisk;
+package server;
 
-import network.safety.server.Message;
-import network.safety.server.Tools;
+import AS.Message;
+import AS.Tools;
 
 import java.io.*;
 import java.net.InetAddress;

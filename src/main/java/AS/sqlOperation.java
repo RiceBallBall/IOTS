@@ -20,7 +20,7 @@ public class sqlOperation {
     // 构造函数
     public sqlOperation() {
         this.dbDriver = "com.mysql.jdbc.Driver";
-        this.url = "jdbc:mysql://172.20.10.11:3306/test?useUnicode=true&characterEncoding=UTF-8";
+        this.url = "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8";
         this.username = "zzr";
         this.password = "zzr123";
         this.mStatement = null;
@@ -98,33 +98,36 @@ public class sqlOperation {
     }
 
     //执行插入语句/
-    public ResultSet insertSQL(String TableName,String ID,String Kc,String n) {
+    public ResultSet insertSQL(String TableName,String ID,String Pk, String Sk,String n) {
         String judge = TableName;
         try{
             if(judge == "TGS"){
-                String sqlinsert="insert into TGS(ID,Pk,n)values(?,?,?)";
+                String sqlinsert="insert into TGS(ID,Pk,Sk,n)values(?,?,?,?)";
                 PreparedStatement insert= connect().prepareStatement(sqlinsert);
                 insert.setString(1,ID);
-                insert.setString(2,Kc);
-                insert.setString(3,n);
+                insert.setString(2,Pk);
+                insert.setString(3,Sk);
+                insert.setString(4,n);
                 insert.executeUpdate();
                 System.out.println("插入TGS成功！");
             }
             if(judge == "server"){
-                String sqlinsert="insert into server(ID,Pk,n)values(?,?,?)";
+                String sqlinsert="insert into server(ID,Pk,Sk,n)values(?,?,?,?)";
                 PreparedStatement insert= connect().prepareStatement(sqlinsert);
                 insert.setString(1,ID);
-                insert.setString(2,Kc);
-                insert.setString(3,n);
+                insert.setString(2,Pk);
+                insert.setString(3,Sk);
+                insert.setString(4,n);
                 insert.executeUpdate();
                 System.out.println("插入server成功！");
             }
             if(judge == "client"){
-                String sqlinsert="insert into client(ID,Kc,n)values(?,?,?)";
+                String sqlinsert="insert into client(ID,Kc,temp,n)values(?,?,?,?)";
                 PreparedStatement insert= connect().prepareStatement(sqlinsert);
                 insert.setString(1,ID);
-                insert.setString(2,Kc);
-                insert.setString(3,n);
+                insert.setString(2,Pk);//
+                insert.setString(3,Sk);
+                insert.setString(4,n);
                 insert.executeUpdate();
                 System.out.println("插入client成功！");
             }
@@ -171,27 +174,27 @@ public class sqlOperation {
 
         //String sql="select * from TGS";
         //String sql1="select * from server";
-        sqlOperation sqlConn = new sqlOperation();
-        sqlConn.connect();
+        sqlOperation operation = new sqlOperation();
+        operation.connect();
 
        //插入语句测
-
-        sqlOperation insert =new sqlOperation();
-        //insert.insertSQL("client","zzr2","123a","sdd");
+        //operation.insertSQL("TGS","tgs00001","643","907","1147");
 
         //查询语句测试
         ResultSet TGS;
-        TGS = sqlConn.searchSQL("client","zzr2");
+        TGS = operation.searchSQL("server","ser00001");
         try {
         while (TGS.next()) {
                 System.out.print(TGS.getString(1) + " \t");
                 System.out.print(TGS.getString(2) + " \t");
+                System.out.print(TGS.getString(3) + " \t");
+                System.out.print(TGS.getString(4));
             }
         } catch (Exception e) {
             System.out.println("数据库操作错误！ \n" + e.getMessage());
         }
 
-insert.alertSQl("client","zzr2","zzr");
+//operation.alertSQl("client","zzr2","zzr");
 
     }
 }

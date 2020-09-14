@@ -1,8 +1,4 @@
 package Client;
-
-import AS.DES;
-import AS.RSA;
-
 import java.security.MessageDigest;
 
 public abstract class Message implements DES, RSA {

@@ -1,7 +1,6 @@
 package Client;
 
 
-import TGS.Message;
 import TGS.SerPanel;
 import TGS.Tools;
 
@@ -9,9 +8,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Client extends Message {
-
-    // private SerPanel ToAS;
+public class ServerClient extends Message {
     public Socket socket;
     int as_port;
     int tgs_port;
@@ -42,7 +39,7 @@ public class Client extends Message {
     public String ST;
 
 
-    Client() throws IOException {
+    ServerClient(Socket socket1) throws IOException {
         ID_tgs = "TGS00001";
         ID_as = "as000001";
         ID_v = "ser00001";
@@ -56,6 +53,7 @@ public class Client extends Message {
         as_port = 8888;
         tgs_port = 4444;
         ser_port = 8888;
+        socket=socket1;
 
         C_IP = "192168002001";
         AS_IP = "127001001001";
@@ -64,7 +62,7 @@ public class Client extends Message {
         AD_as = "";
         AD_ser = "";
         AD_tgs = "";
-        socket = new Socket("172.20.10.3", 9999);
+        //socket = new Socket("172.20.10.3", 9999);
         TS = Tools.getTS();
         Kc_tgs = "";
         LT1="60";
@@ -79,77 +77,36 @@ public class Client extends Message {
     public void setK_c(String kc){
         K_c=kc;
     }
-
-    public static void main(String[] args) throws IOException {
-        Client client = new Client();
+    public static void main(String[] args) throws IOException, InterruptedException {
         String ID_c = "ID000001";
         String K_c = "12345678";
         String IPs = "192168001001";
         String IPr = "127010001001";
-        try {
+        Socket socket = new Socket();
+        ServerClient client=new ServerClient(socket);
+        socket.connect(new InetSocketAddress("172.20.10.3", 9999), 10000);
+        // socket.setSoTimeout(10000);//设置超时时间
+        PrintWriter writer=new PrintWriter(socket.getOutputStream());
+        InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("172.20.10.3", 9999), 10000);
+//        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
+//        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
+        String clientMessage = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n";
+        writer.println(clientMessage);
+        writer.flush();
+        writer.close();
+        clientMessage = bufferedReader.readLine();
+        System.out.println(clientMessage);
+        while (true){
 
-            // socket.setSoTimeout(10000);//设置超时时间
-            PrintWriter writer=new PrintWriter(socket.getOutputStream());
-            InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-//             while (true) {
-            //测试内容
-            String mes_7 = client.m7(ID_c, K_c, 2317 ,3071, IPs, IPr);
-            String mes_1= client.m1(ID_c, client.ID_tgs, client.TS, IPs,IPr);
-            String mes_23a= client.m23a("00",ID_c,2317,3071,IPs,IPr);
-            client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
-            String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
-//            str = in.nextLine();
-
-            writer.println("clientMessage");
-            writer.flush();
-            String s=bufferedReader.readLine();
-            System.out.println(s);
-            // socket.shutdownOutput();
-            System.out.println("ST:"+client.ST.length());
-            String di[]=client.Divide(mes_5);
-            String a[]=client.ST_d(client.ST,1997, 4559);
-            for(int i=0;i<a.length;i++){
-           System.out.println(a[i]);
-            }
-            System.out.println("================");
-            System.out.println("M5:");
-            String b[]=client.m5_d(di[6],"12345678");
-            for(int i=0;i<b.length;i++){
-                System.out.println(b[i]);
-            }
-            System.out.println("================");
-            System.out.println("shut...");
-//            InputStreamReader isr = new InputStreamReader(client.socket.getInputStream());
-//            BufferedReader br = new BufferedReader(isr);
-            String rec="";
-            int c;
-
-//                if((rec= br.readLine())!=null) {
-////                    client_.ToAS.textArea3.setText(rec);
-//                    System.out.print("回复:" + rec);//收到消息
-////                    String bas[] = client.Divide(rec);
-////                    String rec_d[] = client.m8_d(rec, 2371, 3071);
-////                    client_t.mes_display(bas, rec_d, client_tgs.ToAS);
-//                    System.out.println(client.socket.getInetAddress() + " : " + rec);
-//                }
-//            if((c=br.read())!=-1){
-//                +(char)c;
-//            }
-            //测试内容结束
-            //  }
-            while (true) {
-
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-    }
-
+       }
     public void mes_display(String Basic[], String[] mes, SerPanel this_panel) {
         String bas = "";
         bas = bas + "控制字段：" + Basic[0] + "\n";
@@ -355,4 +312,4 @@ public class Client extends Message {
             }
         }
     }
-}
+ }
