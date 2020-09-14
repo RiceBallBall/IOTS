@@ -16,6 +16,9 @@ public class Function {
     public Socket socket;
     InputStreamReader inputStreamReader;
     BufferedReader bufferedReader;
+    JButton btn01 = new JButton("文件上传");
+    JButton btn02 = new JButton("文件下载/删除");
+    JButton btn03 = new JButton("退出系统");
 
     Function(ServerClient client, Socket as_socket) throws IOException {
         //init();
@@ -37,25 +40,22 @@ public class Function {
         label.setOpaque(true);
 
         //设置按钮
-        JButton btn01 = new JButton("文件上传");
         btn01.setBounds(100, 150, 100, 50);
-        JButton btn02 = new JButton("文件下载/删除");
         btn02.setBounds(100, 200, 100, 50);
-        JButton btn03 = new JButton("退出系统");
         btn03.setBounds(150, 250, 100, 50);
         inputStreamReader = new InputStreamReader(socket.getInputStream());
         bufferedReader = new BufferedReader(inputStreamReader)
+        panel.add(btn01);
+        panel.add(btn02);
+        panel.add(btn03);
 
-
+        jf.setContentPane(panel);
+        jf.setVisible(true);
     }
 
     //public Client client;
-    public void run() {
+    public void run() throws IOException {
         //窗口类
-
-        String pack=bufferedReader.readLine();
-
-
         //设置监听
         btn01.addActionListener(new ActionListener() {
             @Override
@@ -67,7 +67,6 @@ public class Function {
                 System.out.println("选择进行文件上传");
             }
         });
-        panel.add(btn01);
 
         btn02.addActionListener(new ActionListener() {
             @Override
@@ -79,7 +78,12 @@ public class Function {
                 //socket连接Server端(刷新目录)
 
                 myClient.ClientAction("9", socket);
-                String pack="";
+                String pack= null;
+                try {
+                    pack = bufferedReader.readLine();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 boolean j = false;
                 //等待Server回复
                 while (!j) {//10号反馈包的验证
@@ -88,6 +92,11 @@ public class Function {
                     if (!j) {//刷新请求失败则重新请求
                         myClient.ClientAction("9", socket);
                     }
+                }
+                try {
+                    pack = bufferedReader.readLine();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
                 String Basic_info[] = myClient.Divide(pack);
                 data = myClient.m10_d(Basic_info[6], myClient.Kc_v);
@@ -100,7 +109,6 @@ public class Function {
                 System.out.println("选择进行文件下载");
             }
         });
-        panel.add(btn02);
 
         btn03.addActionListener(new ActionListener() {
             @Override
@@ -141,9 +149,6 @@ public class Function {
                 System.out.println("退出系统");
             }
         });
-        panel.add(btn03);
 
-        jf.setContentPane(panel);
-        jf.setVisible(true);
     }
 }
