@@ -3,9 +3,10 @@ package AS;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 
-public class SerPanel extends WindowAdapter implements Runnable {
+public class SerPanel implements Runnable {
     public JPanel panel = new JPanel();
     private JLabel label = new JLabel("公钥:");
     private JLabel label8 = new JLabel("N:");
@@ -24,12 +25,11 @@ public class SerPanel extends WindowAdapter implements Runnable {
     JScrollPane scrollPane_1 = new JScrollPane();
     JScrollPane scrollPane_2 = new JScrollPane();
     JScrollPane scrollPane_3 = new JScrollPane();
-
-    ServerSocket the_socket;
+    Socket the_socket;
     public Boolean tgs;
 
 
-    public SerPanel(String Name, int pk, int sk, int n, ServerSocket socket) {
+    public SerPanel(String Name, int pk, int sk, int n, Socket socket) {
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -37,7 +37,6 @@ public class SerPanel extends WindowAdapter implements Runnable {
         frame.add(panel);
         placeComponents1();
         frame.setVisible(true);
-        frame.addWindowListener(this);
         textField.setText(String.valueOf(pk));
         textField1.setText(String.valueOf(sk));
         textField8.setText(String.valueOf(n));

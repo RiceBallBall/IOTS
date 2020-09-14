@@ -49,6 +49,7 @@ public abstract class Message implements DES,RSA  {
     public String[] TGT_d(String data,int sk,int n){//RSA TGSPk公钥加密
         String info[]=new String[6];
         data=RSA.decode(data,sk,n);
+        System.out.println("---:"+data);
         info[0]=data.substring(0,8);//Kc_tgs
         info[1]=data.substring(8,16);//IDc
         info[2]=data.substring(16,28);//ADc
@@ -69,16 +70,16 @@ public abstract class Message implements DES,RSA  {
         return message;
     }
     public String[] m3_d(String data,int sk,int n){
-        String info[]=new String[5];
+        String info[]=new String[6];
         info[0]=data.substring(0,8);//IDv
         info[1]=data.substring(8,936);//TGT
-        String tgt[]=TGT_d(data,sk,n);//查找数据库验证存在则返回解密结果，不存在则返回空
+         String tgt[]=TGT_d(info[1],sk,n);//查找数据库验证存在则返回解密结果，不存在则返回空
 //        String x[]=null;
         String encoded=data.substring(936);
         String decodes=DES.decode(tgt[0],encoded);
         info[2]=decodes.substring(0,8);//IDc
-        info[3]=data.substring(8,16);//ADc
-        info[4]=data.substring(16,30);//TS3
+        info[3]=decodes.substring(8,20);//ADc
+        info[4]=decodes.substring(20,34);//TS3
         info[5]=tgt[0];//KC_tgs
         return info;
     }

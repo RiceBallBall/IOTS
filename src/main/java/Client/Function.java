@@ -44,7 +44,7 @@ public class Function {
         btn02.setBounds(100, 200, 100, 50);
         btn03.setBounds(150, 250, 100, 50);
         inputStreamReader = new InputStreamReader(socket.getInputStream());
-        bufferedReader = new BufferedReader(inputStreamReader)
+        bufferedReader = new BufferedReader(inputStreamReader);
         panel.add(btn01);
         panel.add(btn02);
         panel.add(btn03);

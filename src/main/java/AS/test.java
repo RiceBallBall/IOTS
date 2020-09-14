@@ -1,8 +1,4 @@
-package Client;
-
-import AS.Message;
-import AS.RSA;
-import AS.Tools;
+package AS;
 
 public class test extends Message {
     public static void main(String[] args) {
@@ -20,15 +16,17 @@ public class test extends Message {
         int pk =1129,n=1517,sk=389;
         test t = new test();
         int [] rsa= RSA.rsa();
-        String ST=t.ST("12345678","ID000001","192169001001","ser00001",2501,4550,"20000101101010","60");
-    //    String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,rec[3],rec[2]);
-        String mes = t.m5(ST,"IDC00001","123456789012", Tools.getTS(),"12345678","192123001001","123145167167");
+        //String ST=t.ST("12345678","ID000001","192169001001","ser00001",2501,4550,"20000101101010","60");
+        String TGT=t.TGT(k,ID1,AD,ID2,TS,LT,643,1147);
+        String TGTD[]=t.TGT_d(TGT,907,1147);
+
+        String mes = t.m3(ID1,TGT,ID2,AD,TS,"12345678",AD,AD);
         System.out.println(mes);
         String inf[] = t.Divide(mes);
-        System.out.println("ST:"+ST.length());
+        System.out.println("ST:"+TGT.length());
        // String f[]=t.ST_d(ST,1997,4559);
         System.out.println(t.verify_m(mes));
-        String data[] = t.m5_d(inf[6],"12345678");
+        String data[] = t.m3_d(inf[6],907,1147);
 //        for (int i = 0; i < f.length; i++) {
 //            System.out.println(f[i]);
 //        }
@@ -40,5 +38,9 @@ public class test extends Message {
             System.out.println(data[i]);
         }
         System.out.println("------------------");
+        System.out.println("------------------");
+        for (int i = 0; i < data.length; i++) {
+            System.out.println(data[i]);
+        }
     }
 }

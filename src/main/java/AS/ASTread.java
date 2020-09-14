@@ -12,7 +12,7 @@ public class ASTread extends Message implements Callable {
     private int rsa_pk;
     private int rsa_sk;
     private int rsa_n;
-    private String Kc = "ID000002";
+    private String Kc = "12345678";
     private String ID_c;
     private Socket socket;
     private String AS_IP;
@@ -40,13 +40,14 @@ public class ASTread extends Message implements Callable {
         rsa_n = 3071;
         rsa_pk = 2317;
         rsa_sk = 781;
-        // Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,serverSocket);
+         Panel = new SerPanel("AS",rsa_pk,rsa_sk,rsa_n,socket);
         AS_IP = "192168043188";
         TS = tools.getTS();
         LT = "60";
         tgs_n = 1679;
         tgs_pk = 775;
         sql = operation;
+
     }
 
     public void setTS(String ts) {
@@ -60,48 +61,21 @@ public class ASTread extends Message implements Callable {
     public Boolean call() {
         InetAddress adder = socket.getInetAddress();
         try (InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-             PrintWriter writer = new PrintWriter(socket.getOutputStream());) {
-            String cipher = bufferedReader.readLine();
-            System.out.println(adder);
-            System.out.println(cipher);
-
-            writer.println("============");
-            writer.flush();
-            //writer.close();
-
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);) {
+            String rec = bufferedReader.readLine();
+            ASexcecution(rec);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
         return true;
-    }
-
-    public boolean clientVerify() {//发送给client的密文
-        InetAddress adder = socket.getInetAddress();
-        try (PrintWriter writer = new PrintWriter(socket.getOutputStream());) {
-            String messageClient = m6(getTS(), messageT[0], socket.getInetAddress().toString(), adder.getHostAddress());
-            writer.println(messageClient);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public String getTS() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-        String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
-        return date;
     }
 
     public boolean packSend(Socket socket, String sen_package) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-            BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter);
-            bufferedWriter.write(sen_package);
-            bufferedWriter.flush();
+            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+            writer.println(sen_package);
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -122,11 +96,11 @@ public class ASTread extends Message implements Callable {
             bas += mes[i] + "\n";
         }
         this_panel.textArea5.append(bas);
-        Panel.textArea5.paintImmediately(Panel.textArea5.getBounds());
-
+//        Panel.textArea5.paintImmediately(Panel.textArea5.getBounds());
     }
 
     public void ASexcecution(String rec_package) throws IOException {
+        Panel.textArea4.setText(rec_package);
         String Basic_info[] = Divide(rec_package);
         String data[];
         switch (Basic_info[1]) {//IPr Basic_info[3]
@@ -143,7 +117,7 @@ public class ASTread extends Message implements Callable {
                 String tgt = TGT(Kc_tgs, ID_c, Basic_info[3], ID_tgs, TS, LT, tgs_pk, tgs_n);
                 String re_to_Client = m2(ID_tgs, TS, LT, Kc_tgs, tgt, ID_c, AS_IP, Basic_info[3]);//反馈Client
                 packSend(socket, re_to_Client);//返回给Client
-                //    Panel.textArea3.setText(re_to_Client);
+                Panel.textArea3.setText(re_to_Client);
 
                 break;
             }
@@ -152,7 +126,7 @@ public class ASTread extends Message implements Callable {
                 ID_c = data[0];
                 Panel.textArea2.setText(ID_c);
                 setKc(data[1]);//写入数据库，返回成功报文8
-                sql.insertSQL("Client", ID_c, Kc, "0", TS);
+                sql.insertSQL("client", ID_c, Kc, "0", TS);
                 Boolean result = true;//结果
                 mes_display(Basic_info, data, Panel);
                 String mes_8 = m8(result, rsa_sk, rsa_n, AS_IP, Basic_info[3]);
@@ -167,14 +141,14 @@ public class ASTread extends Message implements Callable {
             case "16": {//TGS的时间戳同步
                 setTS(TS);
                 data = m16_d(Basic_info[6], rsa_sk, rsa_n);//IDc,TS4
-                sql.alertSQl("Client",ID_c,TS);
+                sql.alertSQl("client",ID_c,TS);
             }
             case "0": {//Client的离线请求
                 data = m23a_d(Basic_info[6], rsa_sk, rsa_n);//IDc
                 String mes_24 = m24("11", Kc, AS_IP, Basic_info[3]);
                 packSend(socket, mes_24);//离线反馈
                 setTS(TGS.Tools.getTS());
-                sql.alertSQl("Client", ID_c, TS);
+                sql.alertSQl("client", ID_c, TS);
                 Panel.textArea3.setText(mes_24);
                 this.Panel.textArea3.setText(mes_24);
                 mes_display(Basic_info, data, Panel);
