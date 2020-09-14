@@ -6,21 +6,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class Function {
     public ServerClient myClient;
     public Socket socket;
+    InputStreamReader inputStreamReader;
+    BufferedReader bufferedReader;
 
-    Function(ServerClient client, Socket as_socket) {
+    Function(ServerClient client, Socket as_socket) throws IOException {
         //init();
         socket = as_socket;
         myClient = client;
-    }
-
-    //public Client client;
-    public void run() {
-        //窗口类
         javax.swing.JFrame jf = new javax.swing.JFrame();
         //窗口名称
         jf.setTitle("文件传输系统");
@@ -43,6 +43,18 @@ public class Function {
         btn02.setBounds(100, 200, 100, 50);
         JButton btn03 = new JButton("退出系统");
         btn03.setBounds(150, 250, 100, 50);
+        inputStreamReader = new InputStreamReader(socket.getInputStream());
+        bufferedReader = new BufferedReader(inputStreamReader)
+
+
+    }
+
+    //public Client client;
+    public void run() {
+        //窗口类
+
+        String pack=bufferedReader.readLine();
+
 
         //设置监听
         btn01.addActionListener(new ActionListener() {
