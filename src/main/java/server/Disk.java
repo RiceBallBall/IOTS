@@ -4,11 +4,12 @@ import AS.Message;
 import AS.Tools;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
+
+import static netDisk.ServerDisk.C_IP;
+import static netDisk.ServerDisk.V_IP;
 
 public class Disk extends Message implements Callable {
     private Socket socket = null;
@@ -24,18 +25,12 @@ public class Disk extends Message implements Callable {
         this.socket = socket;
         this.Kc_v = Kc_v;
         this.userName = userName;
-        try {
-            this.socket.setSoTimeout(time);
-            String dir = System.getProperty("user.dir") + "/" + userName;
-            File file = new File(dir);
-            if(!file.exists())file.mkdir();
-        }catch (SocketException e){
-            e.printStackTrace();
-        }
+        String dir = System.getProperty("user.dir") + "/" + userName;
+        File file = new File(dir);
+        if(!file.exists())file.mkdir();
     }
 
     public String call(){
-        InetAddress addr = socket.getInetAddress();
         try(InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             PrintWriter writer = new PrintWriter(socket.getOutputStream());)
@@ -48,7 +43,7 @@ public class Disk extends Message implements Callable {
                 if(datagramType.equals("010100")){//ack
                     String[] telegram = m20_d(clientData, Kc_v);
                     String fileName = telegram[0];
-                    String ack = m12("00", "10", Kc_v, socket.getInetAddress().toString(), addr.getHostAddress());
+                    String ack = m12("00", "10", Kc_v, V_IP, C_IP);
                     writer.println(ack);
                     writer.flush();
                     uploadFile(fileName, writer, bufferedReader);
@@ -56,24 +51,23 @@ public class Disk extends Message implements Callable {
                 if(datagramType.equals("001101")){//ack
                     String[] telegram = m13_d(clientData, Kc_v);
                     String fileName = telegram[0];
-                    String ack = m12("00", "10", Kc_v, socket.getInetAddress().toString(), addr.getHostAddress());
+                    String ack = m12("00", "10", Kc_v, V_IP, C_IP);
                     writer.println(ack);
                     writer.flush();
                     downloadFile(fileName, writer, bufferedReader);
                 }
                 if(datagramType.equals("010101")){//ack
-                    String fileName = "";
                     String[] telegram = m21_d(clientData, Kc_v);
                     String filename = telegram[0];
-                    String ack = m12("00", "10", Kc_v, socket.getInetAddress().toString(), addr.getHostAddress());
+                    String ack = m12("00", "10", Kc_v, V_IP, C_IP);
                     writer.println(ack);
                     writer.flush();
-                    deteleFile(fileName, writer);
+                    deteleFile(filename, writer);
                 }
                 if(datagramType.equals("000000")){// 23号报文
                     String[] offlineData = m23s_d(clientData, Kc_v);
                     //1,IDc与status写入log
-                    writer.println(m24("00", Kc_v, socket.getInetAddress().toString(), addr.getHostAddress())); //offl_fb
+                    writer.println(m24("00", Kc_v, V_IP, C_IP)); //offl_fb
                     writer.flush();
                     //2,离线信息写入log
                     socket.close(); //离线关闭socket
@@ -91,15 +85,18 @@ public class Disk extends Message implements Callable {
         return "";
     }
 
-    public String refreshCatalog(PrintWriter writer){
+    public String refreshCatalog(PrintWriter writer){//
         String dir = System.getProperty("user.dir") + "/" + userName;
+        System.out.println(dir);
         arrayListFile.clear();
         getFile(dir, 0);
         String fileName = "";
         for(int i = 0; i < arrayListFile.size(); ++i){
             if(i != arrayListFile.size() - 1)fileName += arrayListFile.get(i) + "#";
+            else fileName += arrayListFile.get(i);
         }
-        writer.write(m10(arrayListFile.size() + "", fileName, Kc_v, socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress()));
+        System.out.println(fileName);
+        writer.write(m10(arrayListFile.size() + "", fileName, Kc_v, V_IP, C_IP));
         writer.flush();
         return "";
     }
@@ -115,19 +112,19 @@ public class Disk extends Message implements Callable {
         ArrayList<String> arrayListMessage = new ArrayList<>();
         int turn = 0;
         while(turn < sum) {
-            String line = bufferedReader.readLine();// 奇偶校验位 假设ack不会丢失
+            String line = bufferedReader.readLine();
             if (line != null) {//成功收到报文
                 String situation = "11";
                 String[] fields_11 = m11_d(line.substring(100, line.length() - 32), Kc_v);
                 sum = Integer.parseInt(fields_11[1]);
                 if (turn == sum - 1) situation = "00";
                 arrayListMessage.set(turn, fields_11[3]);// turn的长度是2位还是随意
-                String ack = m12(String.valueOf(turn), situation, Kc_v, socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress());
+                String ack = m12(String.valueOf(turn), situation, Kc_v, V_IP, C_IP);
                 writer.println(ack);
                 writer.flush();
                 turn++;
             } else {
-                String ack = m12(String.valueOf(turn), "01", Kc_v, socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress());
+                String ack = m12(String.valueOf(turn), "01", Kc_v, V_IP, C_IP);
                 writer.println(ack);
                 writer.flush();
             }
@@ -142,8 +139,7 @@ public class Disk extends Message implements Callable {
         String context = Tools.FileIn(Name);
         String[] datagram = Tools.dataSplite(context, 1024);
         for(int i = 0; i < datagram.length; ++i){
-            String message = m14(fileName, String.valueOf(datagram.length), String.valueOf(i), datagram[i], Kc_v,
-                    socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress());
+            String message = m14(fileName, String.valueOf(datagram.length), String.valueOf(i), datagram[i], Kc_v, V_IP, C_IP);
             writer.println(message);
             writer.flush();
             String ack = bufferedReader.readLine();
@@ -174,12 +170,12 @@ public class Disk extends Message implements Callable {
         File file = new File(Name);
         if(file.exists()){
             file.delete();
-            String feedback = m22("00", "11", Kc_v, socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress());
+            String feedback = m22("00", "11", Kc_v, V_IP, C_IP);
             writer.println(feedback);
             writer.flush();
         }
         else {
-            String feedback = m22("00", "01", Kc_v, socket.getInetAddress().toString(), socket.getInetAddress().getHostAddress());
+            String feedback = m22("00", "01", Kc_v, V_IP, C_IP);
             writer.println(feedback);
             writer.flush();
         }
