@@ -31,7 +31,7 @@ public class ServerClient extends Message {
     private int v_pk;
     private int v_n;
     private String K_c;
-    private String Kc_v;
+    public String Kc_v;
     public String Kc_tgs;
     public String TS;
     public String LT1;
@@ -92,13 +92,10 @@ public class ServerClient extends Message {
 
 //        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
 //        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
-        String clientMessage = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n";
-        writer.println(clientMessage);
+        String clientMessage = "";
+        client.ST=client.ST("12345678",ID_c, client.C_IP, client.ID_v, client.v_pk, client.v_n, client.TS, client.LT1);
+        String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
+        writer.println(mes_5);
         writer.flush();
         writer.close();
         clientMessage = bufferedReader.readLine();

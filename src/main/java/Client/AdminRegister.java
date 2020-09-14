@@ -1,17 +1,21 @@
-package UI;
+package Client;
+
+
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.net.Socket;
 import javax.swing.*;
 
 public class AdminRegister {
-    AdminRegister(Client myClient) {
+    AdminRegister(ServerClient myClient, Socket mysocket) {
+        socket=mysocket;
         init();
         client = myClient;
     }
 
-    public Client client;
+    public ServerClient client;
+    public  Socket socket;
 
     void init() {
 
@@ -66,23 +70,24 @@ public class AdminRegister {
                 client.ID_c = userID.getText();
                 client. setK_c(new String(password.getPassword()));
 //                String confrimpasswd = new String(confrimPassword.getPassword());
-                //socket连接AS
-//                client.ClientAction("7",socket);
-//                监听得到AS的反馈String pack
-//                boolean j= client.verify_m(pack);
-//                if (j){
-//                client.Clientexcecution(pack);
-//                     }else{
-//                    boolean fb=client.Clientexcecution(pack);
-//                if(fb){
-//                    frame.setVisible(false);
-////                        frame.dispose();
-////                        Login_Register login_register = new Login_Register(client);
-//                }else{
-               // JOptionPane.showMessageDialog(null,"注册失败，无法注册","Error", JOptionPane.ERROR_MESSAGE);
-//                    //失败弹窗
-//                }
-//                }
+//                socket连接AS
+                client.ClientAction("7",socket);
+//                监听得到AS的反馈
+                String pack="";
+                boolean j= client.verify_m(pack);
+                if (j){
+                client.Clientexcecution(pack);
+                     }else{
+                    boolean fb=client.Clientexcecution(pack);
+                if(fb){
+                    frame.setVisible(false);
+//                        frame.dispose();
+//                        Login_Register login_register = new Login_Register(client);
+                }else{
+                JOptionPane.showMessageDialog(null,"注册失败，无法注册","Error", JOptionPane.ERROR_MESSAGE);
+                    //失败弹窗
+                }
+                }
 
 
                 //创建Register类

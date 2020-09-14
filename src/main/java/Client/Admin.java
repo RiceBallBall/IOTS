@@ -1,4 +1,4 @@
-package UI;
+package Client;
 
 public class Admin {
     private String id;//编号

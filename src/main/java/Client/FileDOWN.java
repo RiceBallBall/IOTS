@@ -1,11 +1,11 @@
-package UI;
+package Client;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.net.ServerSocket;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class FileDOWN {
 
@@ -22,8 +22,12 @@ public class FileDOWN {
     final JTextField textField = new JTextField(50);
     JButton btn01 = new JButton("下载");
     JButton btn02 = new JButton("删除");
+    public ServerClient myClient;
+    public Socket socket;
 
-    FileDOWN(String Name) {
+
+    FileDOWN(String Name, ServerClient serverClient, Socket ser_socket,String dir) {
+        this.myClient = serverClient;
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -31,65 +35,60 @@ public class FileDOWN {
         frame.add(panel);
         placeComponents1();
         frame.setVisible(true);
-
+        textArea1.setText(dir);
         textField.setFont(new Font(null, Font.PLAIN, 20));
         panel.add(textField);
+        socket=ser_socket;
 
         // 设置下载按钮监听，点击后获取文本框中的文本
         btn01.setFont(new Font(null, Font.PLAIN, 20));
         btn01.addActionListener(new ActionListener() {
-            String data[];
-            String Basic[];
-            /*myClient.ClientAction("13", socket);
-            String pack;
-            boolean j=false;
-            //等待回复
-            while(!j){
-                j = myClient.verify_m(pack);
-                if(!j){
-                    myClient.ClientAction("13", socket);
-                }
-            }
-            if(myClient.Clientexcecution(pack)){
 
-            }
-
-             */
             public void actionPerformed(ActionEvent e) {
+                String data[];
+                String Basic[];
+                myClient.ClientAction("13", socket);
+                String pack="";
+                boolean j = false;
+                //等待回复
+                while (!j) {
+                    j = myClient.verify_m(pack);
+                    if (!j) {
+                        myClient.ClientAction("13", socket);
+                    }
+                }
+                //监听
+                if (myClient.Clientexcecution(pack)) {
+
+                }
                 System.out.println("下载文件: " + textField.getText());
             }
         });
         panel.add(btn01);
 
 
-
         // 设置删除按钮监听，点击后获取文本框中的文本
         btn02.setFont(new Font(null, Font.PLAIN, 20));
         btn02.addActionListener(new ActionListener() {
-            String data[];
-            String Basic[];
-            /*
-            myClient.ClientAction("21", socket);
-            String pack;
-            boolean j=false;
-            //等待回复
-            while(!j){
-                j = myClient.verify_m(pack);
-                if(!j){
-                    myClient.ClientAction("21", socket);
-                }
-            }
-            myClient.Clientexcecution(pack);
-             */
-
             public void actionPerformed(ActionEvent e) {
-                System.out.println("下载文件: " + textField.getText());
+                System.out.println("删除文件: " + textField.getText());
+                String data[];
+                String Basic[];
+                myClient.ClientAction("21", socket);
+                String pack="";
+                boolean j = false;
+                //等待回复
+                while (!j) {
+                    j = myClient.verify_m(pack);
+                    if (!j) {
+                        myClient.ClientAction("21", socket);
+                    }
+                }
+                myClient.Clientexcecution(pack);
+
             }
         });
         panel.add(btn02);
-
-        //frame.addWindowListener(this);
-        //this.the_socket = socket;
     }
 
     private void placeComponents1() {
@@ -103,14 +102,15 @@ public class FileDOWN {
         scrollPane_1.setBounds(40, 40, 740, 300);//滚动条
         panel.add(scrollPane_1);
         scrollPane_1.setViewportView(textArea1);
-        textField.setBounds(170,360,580,30);//文本框
+        textField.setBounds(170, 360, 580, 30);//文本框
         panel.add(textField);
-        btn01.setBounds(180,430,80,20);//下载按钮
+        btn01.setBounds(180, 430, 80, 20);//下载按钮
         panel.add(btn01);
-        btn02.setBounds(480,430,80,20);//删除按钮
+        btn02.setBounds(480, 430, 80, 20);//删除按钮
         panel.add(btn02);
     }
 
-    public void run() {
+    public void sendPack(String recPack, Socket socket) {
+
     }
 }

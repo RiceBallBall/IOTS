@@ -1,9 +1,10 @@
-package UI;
+package Client;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,9 +14,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class Login_Register {
-    Login_Register() {
+    ServerClient myClient;
+    Socket socket;
+    Login_Register(ServerClient client,Socket mySocket) {
+         socket=mySocket;
+        myClient=client;
         init();
     }
+
     //登录界面初始化
     public void init() {
         JFrame frame = new JFrame("登录");
@@ -56,29 +62,86 @@ public class Login_Register {
                 String passwd = new String (password.getPassword());
 
                 //创建一个Admin用户，把输入框中的用户名密码和提出来
-                Admin admin = new Admin();
-                admin.setID(ID);
-                admin.setPassword(passwd);
+//                Admin admin = new Admin();
+//                admin.setID(ID);
+//                admin.setPassword(passwd);
+//
+//                //登录
+//                Login login = new Login();
+//                login.setAdmin(admin);
+                String Basic[];
+                                String data[];
+                //socket连接as
+                myClient.ClientAction("1", socket);
+                String pack="";
+                boolean j = false;
+                //等待回复
+                while (!j) {//包的验证
+                    //等待回复 readline阻塞
+                    j = myClient.verify_m(pack);
+                    if (!j) {//验证失败则重新请求
+                        myClient.ClientAction("1", socket);
+                    }
+                }
+                myClient.Clientexcecution(pack);
 
-                //登录
-                Login login = new Login();
-                login.setAdmin(admin);
-
-                if(login.JudgeAdmin()==0) {
-                    //弹出账号或密码错误的窗口
+                //断开AS连接TGS
+                myClient.ClientAction("3", socket);
+                //等待回复
+                while (!j) {//包的验证
+                    //等待回复 readline阻塞
+                    j = myClient.verify_m(pack);
+                    if (!j) {//验证失败则重新请求
+                        myClient.ClientAction("3", socket);
+                    }
+                }
+                boolean tgt_v = myClient.Clientexcecution(pack);
+                if (tgt_v) {
+                    //断开TGT连接V
+                    myClient.ClientAction("5", socket);
+                    //等待回复
+                    while (!j) {//包的验证
+                        //等待回复 readline阻塞
+                        j = myClient.verify_m(pack);
+                        if (!j) {//验证失败则重新请求
+                            myClient.ClientAction("5", socket);
+                        }
+                    }
+                    boolean ser_v = myClient.Clientexcecution(pack);
+                    if (ser_v) {
+                        JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
+                        //点击确定后会跳转到主窗口
+                        frame.setVisible(false);
+                        //                            frame.dispose();
+                    } else {
+                        //弹窗ser验证失败
+                    }
+                } else {
+                    //弹窗tgt验证失败
                     JOptionPane.showMessageDialog(null, "账号或密码错误", "账号或密码错误", JOptionPane.WARNING_MESSAGE);
                     //清除密码框中的信息
                     password.setText("");
                     //清除账号框中的信息
                     userID.setText("");
-
-                    //System.out.println("登陆失败");
-                } else {
-                    //弹出登录成功的窗口
-                    JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
-                    //点击确定后会跳转到主窗口
-                    frame.setVisible(false);
                 }
+
+//                if(login.JudgeAdmin()==0) {
+//                    //弹出账号或密码错误的窗口
+//                    JOptionPane.showMessageDialog(null, "账号或密码错误", "账号或密码错误", JOptionPane.WARNING_MESSAGE);
+//                    //清除密码框中的信息
+//                    password.setText("");
+//                    //清除账号框中的信息
+//                    userID.setText("");
+//
+//                    //System.out.println("登陆失败");
+//                } else {
+//                    //弹出登录成功的窗口
+//                    JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
+//                    //点击确定后会跳转到主窗口
+//                    frame.setVisible(false);
+//                    Function function=new Function();
+//
+//                }
             }
         });
 
@@ -87,13 +150,13 @@ public class Login_Register {
             public void actionPerformed(ActionEvent e) {
                 //注册页面
                 frame.setVisible(false);
-                AdminRegister ar = new AdminRegister();
+                AdminRegister ar = new AdminRegister(myClient,socket);
             }
         });
     }
     public static void main(String []args) {
         //主程序
         //登录窗口
-        Login_Register login_register = new Login_Register();
+//        Login_Register login_register = new Login_Register();
     }
 }

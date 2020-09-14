@@ -1,4 +1,6 @@
-package UI;
+package Client;
+
+import AS.Tools;
 
 import javax.swing.*;
 
@@ -43,7 +45,7 @@ public class FileUP {
         upBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String filedata[]=Tools.dataSplite(fin,1024);
+                String filedata[]= Tools.dataSplite(fin,1024);
                 //C->S
                 //myClient.ClientAction("11",socket);
                 for(int i=0;i<filedata.length;i++){
