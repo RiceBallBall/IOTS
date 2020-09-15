@@ -14,9 +14,9 @@ public class ServerClient extends Message {
     int tgs_port;
     int ser_port;
     public String C_IP;
-    private String TGS_IP;//TGS端IP
-    private String AS_IP;//AS端IP
-    private String V_IP;//Server端IP
+    public String TGS_IP;//TGS端IP
+    public String AS_IP;//AS端IP
+    public String V_IP;//Server端IP
     private String AD_as;
     private String AD_ser;
     private String AD_tgs;
@@ -30,16 +30,18 @@ public class ServerClient extends Message {
     private int tgs_n;
     private int v_pk;
     private int v_n;
-    private String K_c;
+    public String K_c;
     public String Kc_v;
     public String Kc_tgs;
     public String TS;
     public String LT1;
     public String TGT;
     public String ST;
+    public String name;
+    public String fileData;
 
 
-    ServerClient(Socket socket1) throws IOException {
+    ServerClient() throws IOException {
         ID_tgs = "TGS00001";
         ID_as = "as000001";
         ID_v = "ser00001";
@@ -53,7 +55,7 @@ public class ServerClient extends Message {
         as_port = 8888;
         tgs_port = 4444;
         ser_port = 8888;
-        socket=socket1;
+        socket = new Socket();
 
         C_IP = "192168002001";
         AS_IP = "127001001001";
@@ -65,7 +67,7 @@ public class ServerClient extends Message {
         //socket = new Socket("172.20.10.3", 9999);
         TS = Tools.getTS();
         Kc_tgs = "";
-        LT1="60";
+        LT1 = "60";
 
         // ToAS = new SerPanel("TGS", tgs_pk, tgs_sk, tgs_n, socket, true);
     }
@@ -74,19 +76,23 @@ public class ServerClient extends Message {
         TS = tsN;
         return;
     }
-    public void setK_c(String kc){
-        K_c=kc;
-    }
+
+    public void setK_c(String kc) {
+        K_c = kc;
+    //bufferedReader.close();
+        }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         String ID_c = "ID000001";
         String K_c = "12345678";
         String IPs = "192168001001";
         String IPr = "127010001001";
+
         Socket socket = new Socket();
-        ServerClient client=new ServerClient(socket);
+        ServerClient client = new ServerClient();
         socket.connect(new InetSocketAddress("192.168.43.3", 9999), 10000);
         // socket.setSoTimeout(10000);//设置超时时间
-        PrintWriter writer=new PrintWriter(socket.getOutputStream());
+        PrintWriter writer = new PrintWriter(socket.getOutputStream());
         InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -108,10 +114,11 @@ public class ServerClient extends Message {
 //        clientMessage = bufferedReader.readLine();
 //        System.out.println(clientMessage);
 
-        while (true){
+        while (true) {
 
         }
-       }
+    }
+
     public void mes_display(String Basic[], String[] mes, SerPanel this_panel) {
         String bas = "";
         bas = bas + "控制字段：" + Basic[0] + "\n";
@@ -127,16 +134,6 @@ public class ServerClient extends Message {
         //  this_panel.textArea5.setText(bas);
     }
 
-    public boolean packSend(Socket socket, String sen_package) {
-        try {
-            PrintWriter writer=new PrintWriter(socket.getOutputStream());
-            writer.println(sen_package);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
     public boolean Clientexcecution(String Package) {
         String data[];
@@ -163,7 +160,7 @@ public class ServerClient extends Message {
                 setTS(Tools.getTS());//获取时间戳
                 // packSend(socket, m1(ID_c, ID_tgs, TS, C_IP, AS_IP));//发送报文
                 //AS->C  验证成功反馈2号
-                data = m2_d(Basic_info[6], ID_c);
+                data = m2_d(Basic_info[6], K_c);
                 Kc_tgs = data[3];
                 TGT = data[4];
                 return true;
@@ -172,6 +169,7 @@ public class ServerClient extends Message {
                 data = m4_d(Basic_info[6], Kc_tgs);
                 ST = data[3];
                 TS = Tools.getTS();
+                Kc_v=data[0];
                 return true;
             }
             case "6": {//TGS->C身份认证成功
@@ -232,47 +230,76 @@ public class ServerClient extends Message {
         return false;
     }
 
-    public void ClientAction(String type, Socket socket) {
+    public boolean packSend(Socket socket, String sen_package, PrintWriter writer) {
+        writer.println(sen_package);
+        writer.flush();
+        return true;
+    }
+
+    public void ClientAction(String type, Socket socket, BufferedReader bufferedReader, PrintWriter writer) {
         String mes_sen;
         switch (type) {
             case "1": {
                 TS = Tools.getTS();
                 mes_sen = m1(ID_c, ID_tgs, TS, C_IP, AS_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
+                System.out.println("m1:" + mes_sen);
+//                try {
+//                    String string = bufferedReader.readLine();
+//                    System.out.println("收到的报文: "+ string);
+//                }catch (IOException e){
+//                    e.printStackTrace();
+//                }
                 break;
             }
             case "3": {
                 TS = Tools.getTS();
                 mes_sen = m3(ID_v, TGT, ID_c, C_IP, TS, Kc_tgs, C_IP, TGS_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
                 break;
             }
             case "5": {
                 TS = Tools.getTS();
+                System.out.println("ST"+ST);
+                System.out.println("IDc"+ID_c);
+                System.out.println("Kcv"+Kc_v);
+
                 mes_sen = m5(ST, ID_c, C_IP, TS, Kc_v, C_IP, V_IP);
-                packSend(socket, mes_sen);
+                System.out.println(mes_sen);
+                packSend(socket, mes_sen, writer);
                 break;
             }
             case "7": {
                 //K_c从UI获取
                 mes_sen = m7(ID_c, K_c, as_pk, as_n, C_IP, AS_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
+                System.out.println("7:" + mes_sen);
                 break;
             }
             case "9": {
                 mes_sen = m9(Kc_v, C_IP, V_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
                 break;
             }
             case "11": {
                 //UI操作，获取文件名
-                String name = "";
                 //文件分块
-                String file[] = new String[4];//len change
+                String file[] = Tools.dataSplite(fileData, 1024);
                 String sum = String.valueOf(file.length);
                 for (int i = 0; i < file.length; i++) {
                     mes_sen = m11(name, sum, String.valueOf(i), file[i], Kc_v, C_IP, V_IP);
-                    packSend(socket, mes_sen);
+                    packSend(socket, mes_sen, writer);
+                    try {
+                        String line = bufferedReader.readLine();
+                    } catch (IOException e) {
+
+                    }
+                    try {
+                        String string = bufferedReader.readLine();
+                        System.out.println("收到的报文: " + string);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 break;
@@ -281,7 +308,7 @@ public class ServerClient extends Message {
                 //UI操作，获取文件名
                 String name = "";
                 mes_sen = m13(name, Kc_v, C_IP, V_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
 
                 break;
             }
@@ -289,7 +316,7 @@ public class ServerClient extends Message {
                 //UI操作，获取文件名
                 String name = "";
                 mes_sen = m20(name, Kc_v, C_IP, V_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
 
                 break;
             }
@@ -297,22 +324,22 @@ public class ServerClient extends Message {
                 //UI操作，获取文件名
                 String name = "";
                 mes_sen = m21(name, Kc_v, C_IP, V_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
 
                 break;
             }
             case "23a": {
                 TS = Tools.getTS();
                 mes_sen = m23a("11", ID_c, as_pk, as_n, C_IP, AS_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
                 break;
             }
             case "23s": {
                 TS = Tools.getTS();
                 mes_sen = m23s("11", ID_c, K_c, C_IP, AS_IP);
-                packSend(socket, mes_sen);
+                packSend(socket, mes_sen, writer);
                 break;
             }
         }
     }
- }
+}
