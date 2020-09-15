@@ -4,10 +4,7 @@ import TGS.TGS;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import javax.swing.JButton;
@@ -32,7 +29,8 @@ public class Login_Register extends IOException {
     String SER_IP = "";
 
 
-    Login_Register() {
+
+    Login_Register(ServerClient client) throws IOException {
         frame.setLayout(null);
         nameStr.setBounds(250, 200, 100, 25);
         frame.add(nameStr);
@@ -52,6 +50,8 @@ public class Login_Register extends IOException {
         AS_IP = "192.168.43.188";
         TGS_IP="192.168.43.112";
         SER_IP="192.168.43.3";
+        socket=new Socket();
+        myClient=client;
         func();
     }
 
@@ -63,82 +63,144 @@ public class Login_Register extends IOException {
             public void actionPerformed(ActionEvent e) {
                 String ID = userID.getText();
                 String passwd = new String(password.getPassword());
+                myClient.ID_c=ID;
+                myClient.K_c=passwd;
                 String data[];
+                try{
+                    socket= new Socket();
+                    socket.connect(new InetSocketAddress("172.20.10.2", 8888), 10000);
+                    try (InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+                         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                         PrintWriter writer = new PrintWriter(socket.getOutputStream()))
+                    {
+                        myClient.ClientAction("1", socket, bufferedReader, writer);
+
+                        String pack = bufferedReader.readLine();
+                        System.out.println("pack_rec"+pack); //null 没有数据
+
+                        myClient.ID_c=ID;
+                        myClient.setK_c(passwd);
+                        boolean j = false;
+                        //等待回复
+                        //InputStreamReader inputStreamReader = null;
+                        //while (!j) {//包的验证
+                            //等待回复 readline阻塞
+                            j = myClient.verify_m(pack);
+                            //if (!j) {//验Login_Register证失败则重新请求
+                              //  myClient.ClientAction("1", socket, bufferedReader, writer);
+                                //pack = bufferedReader.readLine();
+                                j = myClient.verify_m(pack);
+                            //}
+                        //}
+                        myClient.Clientexcecution(pack);
+                            //System.out.println("12232421");
+                    }catch (IOException em){
+                        em.printStackTrace();
+                    }
+                }catch (IOException ex){
+                    ex.printStackTrace();
+                }
                 //socket连接as
-                Socket socket = new Socket();
-                try {
-                    socket.connect(new InetSocketAddress(AS_IP, 8888), 10000);
-                    myClient = new ServerClient(socket);
-                    myClient.ClientAction("1", socket);
-                    InputStreamReader inputStreamReader = null;
-                    inputStreamReader = new InputStreamReader(socket.getInputStream());
+                /*try {
+                    socket.connect(new InetSocketAddress("172.20.10.2", 8888), 10000);
+                    System.out.println("pack_rec1");
+                    InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+                    System.out.println("pack_rec2");
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    myClient.ClientAction("1", socket);
                     String pack = bufferedReader.readLine();
+
+                    myClient.ID_c=ID;
+                    myClient.setK_c(passwd);
+                    System.out.println("pack_rec0");
+                    System.out.println("pack_rec3");
                     boolean j = false;
                     //等待回复
+                    //InputStreamReader inputStreamReader = null;
+                    System.out.println("pack_rec"+pack);
+
                     while (!j) {//包的验证
                         //等待回复 readline阻塞
                         j = myClient.verify_m(pack);
-                        if (!j) {//验证失败则重新请求
+                        if (!j) {//验Login_Register证失败则重新请求
                             myClient.ClientAction("1", socket);
+                            pack = bufferedReader.readLine();
                             j = myClient.verify_m(pack);
-
                         }
                     }
                     myClient.Clientexcecution(pack);
-                    socket.close();
+                    // socket.close();
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
-                }
+                }*/
 
                 // socket.setSoTimeout(10000);//设置超时时间
+                try{
+                    System.out.println("准备连接");
+                    socket.close();
+                    socket = new Socket(); //不同的socket
+                    System.out.println("开始连接TGS"); //没有运行
+                    socket.connect(new InetSocketAddress("172.20.10.11", 8887), 10000);
+                    System.out.println("完成连接TGS");
+                }catch (IOException ee){
+                    ee.printStackTrace();
+                }
                 try {
-                    socket.connect(new InetSocketAddress(TGS_IP, 8888), 10000);
-                    myClient.ClientAction("3", socket);
-                    InputStreamReader inputStreamReader = null;
-                    inputStreamReader = new InputStreamReader(socket.getInputStream());
+                    InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    {
+                    myClient.ClientAction("3", socket, bufferedReader, writer);
                     String pack = bufferedReader.readLine();
+                    System.out.println(pack);
                     //等待回复
                     boolean j = false;
                     j = myClient.verify_m(pack);
-                    while (!j) {//包的验证
+//                    while (!j) {//包的验证
                         //等待回复 readline阻塞
-                        j = myClient.verify_m(pack);
-                        if (!j) {//验证失败则重新请求
-                            myClient.ClientAction("3", socket);
-                            j = myClient.verify_m(pack);
-
-                        }
+//                        if (!j) {//验证失败则重新请求
+//                            myClient.ClientAction("3", socket, bufferedReader, writer);
+//                            j = myClient.verify_m(pack);
+//                       }
                         boolean tgt_v = myClient.Clientexcecution(pack);
                         if (tgt_v) {
+                            System.out.println("TGS成功");
+
+                            writer.close();
                             //断开TGT连接V
                             try {
+                                bufferedReader.close();
+                                writer.close();
                                 socket.close();
-                                socket.connect(new InetSocketAddress(SER_IP, 8888), 10000);
-                                myClient.ClientAction("5", socket);
-                                InputStreamReader inputStreamReader1 = null;
+                                socket = new Socket();
+                                socket.connect(new InetSocketAddress("172.20.10.3", 5678), 10000);
+                                bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                writer = new PrintWriter(socket.getOutputStream());
+
+                                myClient.ClientAction("5", socket, bufferedReader, writer);
+                                /*InputStreamReader inputStreamReader1 = null;
                                 inputStreamReader = new InputStreamReader(socket.getInputStream());
-                                BufferedReader bufferedReader1 = new BufferedReader(inputStreamReader);
+                                BufferedReader bufferedReader1 = new BufferedReader(inputStreamReader);*/
                                 String pack1 = bufferedReader.readLine();
                                 j = false;
-                                while (!j) {//包的验证
+
                                     //等待回复 readline阻塞
                                     j = myClient.verify_m(pack1);
-                                    if (!j) {//验证失败则重新请求
-                                        myClient.ClientAction("5", socket);
-                                    }
-                                }
+//                                    if (!j) {//验证失败则重新请求
+//                                        myClient.ClientAction("5", socket, bufferedReader, writer);
+//                                    }
+
                                 boolean ser_v = myClient.Clientexcecution(pack1);
                                 if (ser_v) {
                                     JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
                                     //点击确定后会跳转到主窗口
-                                    Function function = new Function(myClient, socket);
+                                    Function function = new Function(myClient, socket, bufferedReader, writer);
                                     function.run();
                                     frame.setVisible(false);
                                     //                            frame.dispose();
                                 } else {
-                                    //弹窗ser验证失败
+                                    JOptionPane.showMessageDialog(null, "登陆失败", "登陆失败", JOptionPane.NO_OPTION);
+
                                 }
 
                             } catch (IOException ioException) {
@@ -175,21 +237,33 @@ public class Login_Register extends IOException {
                     ioException.printStackTrace();
                 }
 
-                //为注册按钮添加监听器
-                buttonregister.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        //注册页面
-                        frame.setVisible(false);
-                        AdminRegister ar = new AdminRegister(myClient, socket);
-                    }
-                });
             }
         });
-
+        //为注册按钮添加监听器
+        buttonregister.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //注册页面
+                frame.setVisible(false);
+                //socket = new Socket();
+                try{
+                    socket.connect(new InetSocketAddress("172.20.10.2", 8888), 10000); //as IP
+                    AdminRegister adminRegister = new AdminRegister(myClient, socket);
+                    adminRegister.init();
+                    // socket.close();
+                }catch (IOException e1){
+                    e1.printStackTrace();
+                }
+                //socket.connect(new InetSocketAddress("172.20.10.3", 8888), 10000);
+                //AdminRegister adminRegister = new AdminRegister(myClient, socket);
+                //adminRegister.init();
+            }
+        });
     }
 
-    public static void main(String[] args) {
-
-
+    public static void main(String[] args) throws IOException {
+        System.out.println("欢迎使用文件传输系统");
+        ServerClient serverClient=new ServerClient();
+        Login_Register login_register=new Login_Register(serverClient);
+        login_register.func();
     }
 }
