@@ -8,14 +8,25 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class FileUP {
-    FileUP(){
+    FileUP(Socket socket, BufferedReader bufferedReader, PrintWriter writer,ServerClient client){
         fin="";
+        this.socket = socket;
+        this.bufferedReader = bufferedReader;
+        this.writer = writer;
+        myClient=client;
     }
     String fin;
+    Socket socket;
+    BufferedReader bufferedReader;
+    PrintWriter writer;
+    ServerClient myClient;
     public void run(){
         final JFrame jf = new JFrame("文件传输系统-文件上传");
         jf.setSize(400, 250);
@@ -34,6 +45,9 @@ public class FileUP {
             public void actionPerformed(ActionEvent e) {
                 try {
                     fin=showFileOpenDialog(jf, msgTextArea);
+                    String[] s=msgTextArea.getText().split("/");
+                    myClient.name=s[s.length-1];
+                    myClient.fileData=fin;
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -45,12 +59,12 @@ public class FileUP {
         upBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String filedata[]= Tools.dataSplite(fin,1024);
+
+                myClient.ClientAction("11", socket, bufferedReader, writer);
                 //C->S
-                //myClient.ClientAction("11",socket);
-                for(int i=0;i<filedata.length;i++){
+                /*for(int i=0;i<filedata.length;i++){
                     System.out.println(filedata[i]);
-                }
+                }*/
             }
         });
         panel.add(upBtn);
