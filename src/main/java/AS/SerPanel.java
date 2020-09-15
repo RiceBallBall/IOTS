@@ -2,11 +2,13 @@ package AS;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 
-public class SerPanel implements Runnable {
+public class SerPanel extends WindowAdapter implements Runnable {
     public JPanel panel = new JPanel();
     private JLabel label = new JLabel("公钥:");
     private JLabel label8 = new JLabel("N:");
@@ -25,11 +27,13 @@ public class SerPanel implements Runnable {
     JScrollPane scrollPane_1 = new JScrollPane();
     JScrollPane scrollPane_2 = new JScrollPane();
     JScrollPane scrollPane_3 = new JScrollPane();
-    Socket the_socket;
+    public Socket the_socket;
     public Boolean tgs;
+    public sqlOperation mySQL;
 
 
-    public SerPanel(String Name, int pk, int sk, int n, Socket socket) {
+    public SerPanel(String Name, int pk, int sk, int n, Socket socket,sqlOperation sql) {
+
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
         frame.setSize(820, 500);
@@ -99,24 +103,25 @@ public class SerPanel implements Runnable {
     public void run() {
     }
 
-//    public void windowClosing(WindowEvent windowEvent) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    the_socket.close();
-//                    System.out.println("[Disconnected...]");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                if (tgs) {
-//                }
-//                System.exit(0);
-//            }
-//        }).start();
-//
-//
-//    }
+    public void windowClosing(WindowEvent windowEvent) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    the_socket.close();
+                    mySQL.disConnect();
+                    System.out.println("[Disconnected...]");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (tgs) {
+                }
+                System.exit(0);
+            }
+        }).start();
+
+
+    }
 
 //    public static void main(String[] args) {
 //        ASPanel asPanel = new ASPanel("AS端");

@@ -1,11 +1,9 @@
 package TGS;
 
-import AS.DES;
-import AS.RSA;
 
 import java.security.MessageDigest;
 
-public abstract class Message implements AS.DES, AS.RSA {
+public abstract class Message implements DES,RSA {
 
 
     public String m1(String ID_c, String ID_tgs, String Ts1,String IPs,String IPr) {//C->AS发起请求
@@ -53,6 +51,7 @@ public abstract class Message implements AS.DES, AS.RSA {
     public String[] TGT_d(String data,int sk,int n){//RSA TGSPk公钥加密
         String info[]=new String[6];
         data= AS.RSA.decode(data,sk,n);
+        System.out.println("---:"+data);
         info[0]=data.substring(0,8);//Kc_tgs
         info[1]=data.substring(8,16);//IDc
         info[2]=data.substring(16,28);//ADc
@@ -76,13 +75,13 @@ public abstract class Message implements AS.DES, AS.RSA {
         String info[]=new String[6];
         info[0]=data.substring(0,8);//IDv
         info[1]=data.substring(8,936);//TGT
-        String tgt[]=TGT_d(data,sk,n);//查找数据库验证存在则返回解密结果，不存在则返回空
+         String tgt[]=TGT_d(info[1],sk,n);//查找数据库验证存在则返回解密结果，不存在则返回空
 //        String x[]=null;
         String encoded=data.substring(936);
         String decodes= AS.DES.decode(tgt[0],encoded);
         info[2]=decodes.substring(0,8);//IDc
-        info[3]=data.substring(8,16);//ADc
-        info[4]=data.substring(16,30);//TS3
+        info[3]=decodes.substring(8,20);//ADc
+        info[4]=decodes.substring(20,34);//TS3
         info[5]=tgt[0];//KC_tgs
         return info;
     }
@@ -107,6 +106,7 @@ public abstract class Message implements AS.DES, AS.RSA {
 
     public String ST(String Kc_v, String ID_c, String AD_c,String IDv, int pk,int n, String TS4, String lifetime2) {
         String message = AS.RSA.encode(Kc_v+ID_c+AD_c+IDv+TS4+DemitoBin(lifetime2),pk,n);
+        System.out.println("len:"+message.length());
  //      message=DES.decode(IDv,message);
         return message;
     }

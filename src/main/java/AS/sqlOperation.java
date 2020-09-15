@@ -19,7 +19,7 @@ public class sqlOperation {
 
     // 构造函数
     public sqlOperation() {
-        this.dbDriver = "com.mysql.jdbc.Driver";
+        this.dbDriver = "com.mysql.cj.jdbc.Driver";
         this.url = "jdbc:mysql://172.20.10.11/test?useUnicode=true&characterEncoding=UTF-8";
         this.username = "zzr";
         this.password = "zzr123";
