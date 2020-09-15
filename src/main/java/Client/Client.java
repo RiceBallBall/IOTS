@@ -64,7 +64,7 @@ public class Client extends Message {
         AD_as = "";
         AD_ser = "";
         AD_tgs = "";
-        socket = new Socket("172.20.10.3", 9999);
+        socket = new Socket("172.20.10,11", 1233);
         TS = Tools.getTS();
         Kc_tgs = "";
         LT1="60";
@@ -89,7 +89,7 @@ public class Client extends Message {
         try {
 
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("172.20.10.3", 9999), 10000);
+            socket.connect(new InetSocketAddress("172.20.10.11", 1233), 10000);
 
             // socket.setSoTimeout(10000);//设置超时时间
             PrintWriter writer=new PrintWriter(socket.getOutputStream());
@@ -104,7 +104,7 @@ public class Client extends Message {
             String mes_5=client.m5(client.ST, ID_c, client.C_IP, client.TS, "12345678", client.C_IP, client.V_IP);
 //            str = in.nextLine();
 
-            writer.println("clientMessage");
+            writer.println(mes_7);
             writer.flush();
             String s=bufferedReader.readLine();
             System.out.println(s);

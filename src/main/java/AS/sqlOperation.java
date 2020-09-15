@@ -33,6 +33,7 @@ public class sqlOperation {
         try {
             Class.forName(this.dbDriver).newInstance();
             mConnect = DriverManager.getConnection(url, username, password);
+            System.out.println("连接数据库成功");
         } catch (Exception e) {
             System.out.println("连接数据库错误: \n" + url + "\n" + e.getMessage());
         }
@@ -44,6 +45,7 @@ public class sqlOperation {
         try {
             this.mConnect.close();
             this.mStatement.close();
+            System.out.println("关闭数据库成功！");
         } catch (SQLException e) {
             System.out.println("关闭数据库错误：\n" + e.getMessage());
             return false;

@@ -20,20 +20,20 @@ public abstract class Message implements DES,RSA  {
         return info;
     }
 
-    public String m2(String ID_tgs, String Ts2, String lifetime, String Kc_tgs, String TGT,String IDc,String IPs,String IPr) {//AS->C回复
+    public String m2(String ID_tgs, String Ts2, String lifetime, String Kc_tgs, String TGT,String Kc,String IPs,String IPr) {//AS->C回复
         String message = ID_tgs +Ts2+DemitoBin(lifetime)+Kc_tgs+TGT;
-        message=DES.encode(IDc,message);
-        String test =DES.decode(IDc,message);
+        message=DES.encode(Kc,message);
+        String test =DES.decode(Kc,message);
         String field="010100";
         message=field+"000010"+info_integ(message,IPs,IPr)+message;
         String ver= md5_encryption(message);
         message=message+ver;
-
+        System.out.println("m2"+message);
         return message;
     }
-    public String[] m2_d(String data,String IDc){
+    public String[] m2_d(String data,String Kc){
         String info[]=new String[5];
-        String decoded=DES.decode(IDc,data);
+        String decoded=DES.decode(Kc,data);
         info[0]=decoded.substring(0,8);//IDtgs
         info[1]=decoded.substring(8,22);//TS2
         info[2]=BinToDemi(decoded.substring(22,30));//LT1
