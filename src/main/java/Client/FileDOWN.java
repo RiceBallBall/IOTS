@@ -1,8 +1,13 @@
 package Client;
 
+import TGS.Tools;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.awt.event.ActionListener;
 import java.net.Socket;
@@ -24,9 +29,11 @@ public class FileDOWN {
     JButton btn02 = new JButton("删除");
     public ServerClient myClient;
     public Socket socket;
+    BufferedReader bufferedReader;
+    PrintWriter writer;// client.ClientAction("7",socket);
 
 
-    FileDOWN(String Name, ServerClient serverClient, Socket ser_socket,String dir) {
+    FileDOWN(String Name, ServerClient serverClient, Socket ser_socket, BufferedReader bufferedReader, PrintWriter writer, String dir) {
         this.myClient = serverClient;
         JFrame frame = new JFrame(Name);
         // Setting the width and height of frame
@@ -39,6 +46,8 @@ public class FileDOWN {
         textField.setFont(new Font(null, Font.PLAIN, 20));
         panel.add(textField);
         socket=ser_socket;
+        this.bufferedReader = bufferedReader;
+        this.writer = writer;
 
         // 设置下载按钮监听，点击后获取文本框中的文本
         btn01.setFont(new Font(null, Font.PLAIN, 20));
@@ -47,19 +56,46 @@ public class FileDOWN {
             public void actionPerformed(ActionEvent e) {
                 String data[];
                 String Basic[];
-                myClient.ClientAction("13", socket);
+                myClient.name=textField.getText();
+                myClient.ClientAction("13", socket, bufferedReader, writer);
                 String pack="";
                 boolean j = false;
                 //等待回复
                 while (!j) {
                     j = myClient.verify_m(pack);
                     if (!j) {
-                        myClient.ClientAction("13", socket);
+                        myClient.ClientAction("13", socket, bufferedReader, writer);
                     }
                 }
                 //监听
+                String context = "";
+                String rec_File = "";
                 if (myClient.Clientexcecution(pack)) {
-
+                    try{
+                        int turn = 0, sumDatagram = 10;
+                        while(turn < sumDatagram) {
+                            String line = bufferedReader.readLine();
+                            if (line != null) {//成功收到报文
+                                String situation = "11";
+                                String[] fields_11 = myClient.m14_d(line.substring(100, line.length() - 32), myClient.Kc_v);
+                                sumDatagram = Integer.parseInt(fields_11[1]);
+                                rec_File = fields_11[0];
+                                if (turn == sumDatagram - 1) situation = "00";
+                                context +=fields_11[3];
+                                String ack = myClient.m12(String.valueOf(turn), situation, myClient.Kc_v, myClient.V_IP, myClient.C_IP);
+                                writer.println(ack);
+                                writer.flush();
+                                turn++;
+                            } else {
+                                String ack = myClient.m12(String.valueOf(turn), "01", myClient.Kc_v, myClient.V_IP, myClient.C_IP);
+                                writer.println(ack);
+                                writer.flush();
+                            }
+                        }
+                        Tools.FileOut(System.getProperty("user.dir") + "/" + rec_File, context);
+                    }catch (IOException eq){
+                        eq.printStackTrace();
+                    }
                 }
                 System.out.println("下载文件: " + textField.getText());
             }
@@ -74,14 +110,14 @@ public class FileDOWN {
                 System.out.println("删除文件: " + textField.getText());
                 String data[];
                 String Basic[];
-                myClient.ClientAction("21", socket);
+                myClient.ClientAction("21", socket, bufferedReader, writer);
                 String pack="";
                 boolean j = false;
                 //等待回复
                 while (!j) {
                     j = myClient.verify_m(pack);
                     if (!j) {
-                        myClient.ClientAction("21", socket);
+                        myClient.ClientAction("21", socket, bufferedReader, writer);
                     }
                 }
                 myClient.Clientexcecution(pack);
@@ -110,7 +146,7 @@ public class FileDOWN {
         panel.add(btn02);
     }
 
-    public void sendPack(String recPack, Socket socket) {
+    /*public void sendPack(String recPack, Socket socket) {
 
-    }
+    }*/
 }
