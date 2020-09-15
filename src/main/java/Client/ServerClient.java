@@ -273,7 +273,6 @@ public class ServerClient extends Message {
                 //K_c从UI获取
                 mes_sen = m7(ID_c, K_c, as_pk, as_n, C_IP, AS_IP);
                 packSend(socket, mes_sen, writer);
-                System.out.println("7:" + mes_sen);
                 break;
             }
             case "9": {
