@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Function {
+public class Function extends Thread{
     public ServerClient myClient;
     public Socket socket;
     InputStreamReader inputStreamReader;
@@ -55,10 +55,11 @@ public class Function {
 
         jf.setContentPane(panel);
         jf.setVisible(true);
+
     }
 
     //public Client client;
-    public void run() throws IOException {
+    public void run(){
         //窗口类
         //设置监听
         btn01.addActionListener(new ActionListener() {
@@ -80,12 +81,13 @@ public class Function {
                 String Basic[];
                 String data[];
                 //socket连接Server端(刷新目录)
-
                 myClient.ClientAction("9", socket, bufferedReader, writer);
                 String pack="";
-                System.out.println("pack:"+pack);
                 try {
+                    System.out.println("pack:--");
                     pack = bufferedReader.readLine();
+                    System.out.println("pack:"+pack);
+
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
@@ -98,11 +100,7 @@ public class Function {
 //                        myClient.ClientAction("9", socket, bufferedReader, writer);
 //                    }
 //                }
-                try {
-                    pack = bufferedReader.readLine();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+
                 String Basic_info[] = myClient.Divide(pack);
                 data = myClient.m10_d(Basic_info[6], myClient.Kc_v);
                 String sp[] = Tools.splite_name(data[1]);

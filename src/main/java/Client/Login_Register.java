@@ -47,9 +47,9 @@ public class Login_Register extends IOException {
         frame.setBounds(400, 100, 800, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        AS_IP = "192.168.43.188";
-        TGS_IP="192.168.43.112";
-        SER_IP="192.168.43.3";
+        AS_IP = "127.0.0.1";
+        TGS_IP="192.168.43.18";
+        SER_IP="192.168.43.197";
         socket=new Socket();
         myClient=client;
         func();
@@ -68,7 +68,7 @@ public class Login_Register extends IOException {
                 String data[];
                 try{
                     socket= new Socket();
-                    socket.connect(new InetSocketAddress("172.20.10.2", 8888), 10000);
+                    socket.connect(new InetSocketAddress(AS_IP, 8888), 10000);
                     try (InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                          BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                          PrintWriter writer = new PrintWriter(socket.getOutputStream()))
@@ -140,7 +140,7 @@ public class Login_Register extends IOException {
                     socket.close();
                     socket = new Socket(); //不同的socket
                     System.out.println("开始连接TGS"); //没有运行
-                    socket.connect(new InetSocketAddress("172.20.10.11", 8887), 10000);
+                    socket.connect(new InetSocketAddress(TGS_IP, 7777), 10000);
                     System.out.println("完成连接TGS");
                 }catch (IOException ee){
                     ee.printStackTrace();
@@ -173,7 +173,7 @@ public class Login_Register extends IOException {
                                 writer.close();
                                 socket.close();
                                 socket = new Socket();
-                                socket.connect(new InetSocketAddress("172.20.10.3", 5678), 10000);
+                                socket.connect(new InetSocketAddress(SER_IP, 5678), 10000);
                                 bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                                 writer = new PrintWriter(socket.getOutputStream());
 
@@ -191,11 +191,18 @@ public class Login_Register extends IOException {
 //                                    }
 
                                 boolean ser_v = myClient.Clientexcecution(pack1);
+                                System.out.println("server pack: " + pack1);
+
                                 if (ser_v) {
                                     JOptionPane.showMessageDialog(null, "登陆成功", "登陆成功", JOptionPane.NO_OPTION);
                                     //点击确定后会跳转到主窗口
                                     Function function = new Function(myClient, socket, bufferedReader, writer);
                                     function.run();
+                                    try{
+                                        function.join();
+                                    }catch (InterruptedException er){
+                                        er.printStackTrace();
+                                    }
                                     frame.setVisible(false);
                                     //                            frame.dispose();
                                 } else {
@@ -246,7 +253,7 @@ public class Login_Register extends IOException {
                 frame.setVisible(false);
                 //socket = new Socket();
                 try{
-                    socket.connect(new InetSocketAddress("172.20.10.2", 8888), 10000); //as IP
+                    socket.connect(new InetSocketAddress("192.168.43.18", 8888), 10000); //as IP
                     AdminRegister adminRegister = new AdminRegister(myClient, socket);
                     adminRegister.init();
                     // socket.close();

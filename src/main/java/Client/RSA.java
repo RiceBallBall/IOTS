@@ -35,7 +35,7 @@ public interface RSA {
         return result;
     }
 
-    static String toString1(String str,int x){
+    static String toString1(String str, int x){
         String s="";
         for (int j=0;j<str.length()/x;j++) {
             String t1 = str.substring(j * x, j * x + x);
@@ -86,7 +86,7 @@ public interface RSA {
         return true;
     }
 
-    static boolean relatively_prime(int n1,int n2){
+    static boolean relatively_prime(int n1, int n2){
         double max=Math.min(Math.sqrt((double)n1),Math.sqrt((double)n2));
         if(n1%n2==0||n2%n1==0){
             return false;
@@ -102,7 +102,7 @@ public interface RSA {
         return true;
     }
 
-    static int private_key(int e,int p,int q){//私钥
+    static int private_key(int e, int p, int q){//私钥
         int f = (p - 1) * (q - 1);
         for(int d = 1; d < f; d ++)    //找到逆元d
         {
@@ -111,7 +111,7 @@ public interface RSA {
         }
         return 0;
     }
-    static int public_key(int p,int q){
+    static int public_key(int p, int q){
         int f=(p-1)*(q-1);
         int e;
         Random random = new Random();
@@ -145,13 +145,13 @@ public interface RSA {
         return m;
     }
 
-    static String Signature(String m,int sk,int n){
+    static String Signature(String m, int sk, int n){
         String Encrypted =md5(m);//bin
         Encrypted= decode(Encrypted,sk,n);
         return Encrypted;
     }
 
-    static boolean Verify(String s,String m,int pk,int n){
+    static boolean Verify(String s, String m, int pk, int n){
         String M= encode(s,pk,n);
         String h=md5(m);
 //        System.out.println("Ve:"+M+" h(M)"+h);

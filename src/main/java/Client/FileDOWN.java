@@ -52,29 +52,36 @@ public class FileDOWN {
         // 设置下载按钮监听，点击后获取文本框中的文本
         btn01.setFont(new Font(null, Font.PLAIN, 20));
         btn01.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 String data[];
                 String Basic[];
                 myClient.name=textField.getText();
                 myClient.ClientAction("13", socket, bufferedReader, writer);
                 String pack="";
+                try{
+                    pack=bufferedReader.readLine();
+                    System.out.println("pack1:"+pack);
+                }catch (IOException el){
+                    el.printStackTrace();
+                }
                 boolean j = false;
                 //等待回复
-                while (!j) {
+//                while (!j) {
                     j = myClient.verify_m(pack);
-                    if (!j) {
-                        myClient.ClientAction("13", socket, bufferedReader, writer);
-                    }
-                }
+//                    if (!j) {
+//                        myClient.ClientAction("13", socket, bufferedReader, writer);
+//                    }
+//                }
                 //监听
                 String context = "";
                 String rec_File = "";
                 if (myClient.Clientexcecution(pack)) {
                     try{
+                        System.out.println("======");
                         int turn = 0, sumDatagram = 10;
                         while(turn < sumDatagram) {
                             String line = bufferedReader.readLine();
+                            System.out.println("line:"+line);
                             if (line != null) {//成功收到报文
                                 String situation = "11";
                                 String[] fields_11 = myClient.m14_d(line.substring(100, line.length() - 32), myClient.Kc_v);
@@ -83,6 +90,7 @@ public class FileDOWN {
                                 if (turn == sumDatagram - 1) situation = "00";
                                 context +=fields_11[3];
                                 String ack = myClient.m12(String.valueOf(turn), situation, myClient.Kc_v, myClient.V_IP, myClient.C_IP);
+                                System.out.println("ack:"+ack);
                                 writer.println(ack);
                                 writer.flush();
                                 turn++;
@@ -107,19 +115,26 @@ public class FileDOWN {
         btn02.setFont(new Font(null, Font.PLAIN, 20));
         btn02.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("删除文件: " + textField.getText());
+                String currentFileName = textField.getText();
+                System.out.println("删除文件: " + currentFileName);
                 String data[];
                 String Basic[];
+                myClient.name = currentFileName;
                 myClient.ClientAction("21", socket, bufferedReader, writer);
-                String pack="";
+                String pack= "";
+                try {
+                    pack = bufferedReader.readLine();
+                }catch (IOException eu){
+                    eu.printStackTrace();
+                }
                 boolean j = false;
                 //等待回复
-                while (!j) {
+                /*while (!j) {
                     j = myClient.verify_m(pack);
                     if (!j) {
                         myClient.ClientAction("21", socket, bufferedReader, writer);
                     }
-                }
+                }*/
                 myClient.Clientexcecution(pack);
 
             }

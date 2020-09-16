@@ -59,7 +59,13 @@ public class FileUP {
         upBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                myClient.ClientAction("20", socket, bufferedReader, writer);
+                try{
+                    String ack = bufferedReader.readLine();
+                    System.out.println("ack:  " + ack);
+                }catch (IOException er){
+                    er.printStackTrace();
+                }
                 myClient.ClientAction("11", socket, bufferedReader, writer);
                 //C->S
                 /*for(int i=0;i<filedata.length;i++){
@@ -73,8 +79,8 @@ public class FileUP {
         jf.setVisible(true);
     }
 
-    //打开文件
-    private static String showFileOpenDialog(Component parent, JTextArea msgTextArea) throws IOException {
+    //打开文件 STATIC
+    private  String showFileOpenDialog(Component parent, JTextArea msgTextArea) throws IOException {
         // 创建一个默认的文件选取器
         JFileChooser fileChooser = new JFileChooser();
         // 设置默认显示的文件夹为当前文件夹
@@ -95,7 +101,11 @@ public class FileUP {
             //从本地读取文件
             msgTextArea.append("打开文件: " + file.getAbsolutePath() + "\n\n");
             String Files = Tools.FileIn(file.getAbsolutePath());
-            System.out.println(Files);
+            myClient.fileData = Files;
+            String[] stringSplit = file.getAbsolutePath().split("/");
+            myClient.name = stringSplit[stringSplit.length - 1].trim();
+            System.out.println("myClient.fileData:  " + myClient.fileData);
+            System.out.println("myClient.name:  " + myClient.name);
             return Files;
         }
         return null;

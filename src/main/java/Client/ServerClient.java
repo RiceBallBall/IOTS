@@ -55,7 +55,7 @@ public class ServerClient extends Message {
         as_port = 8888;
         tgs_port = 4444;
         ser_port = 8888;
-        socket = new Socket();
+        // socket = new Socket();
 
         C_IP = "192168002001";
         AS_IP = "127001001001";
@@ -177,6 +177,12 @@ public class ServerClient extends Message {
                 //ui跳转功能界面（上传下载删除推出）
                 return true;
             }
+            case "12": {//ack
+                data = m12_d(Basic_info[6],Kc_v);
+                //UI操作插入
+                System.out.println("suc");
+                return true;
+            }
             case "18": {//TGS->C身分验证失败
                 data = m18_d(Basic_info[6], tgs_pk, tgs_n);
                 //UI操作插入
@@ -232,6 +238,7 @@ public class ServerClient extends Message {
 
     public boolean packSend(Socket socket, String sen_package, PrintWriter writer) {
         writer.println(sen_package);
+        System.out.println("sem_page:"+sen_package);
         writer.flush();
         return true;
     }
@@ -273,6 +280,7 @@ public class ServerClient extends Message {
                 //K_c从UI获取
                 mes_sen = m7(ID_c, K_c, as_pk, as_n, C_IP, AS_IP);
                 packSend(socket, mes_sen, writer);
+                System.out.println("7:" + mes_sen);
                 break;
             }
             case "9": {
@@ -283,16 +291,19 @@ public class ServerClient extends Message {
             case "11": {
                 //UI操作，获取文件名
                 //文件分块
+
+                name = name.substring(0, 8);
                 String file[] = Tools.dataSplite(fileData, 1024);
+
+                System.out.println("fileData:  " + fileData);
+                System.out.println("client file name: " + name);
+
                 String sum = String.valueOf(file.length);
                 for (int i = 0; i < file.length; i++) {
-                    mes_sen = m11(name, sum, String.valueOf(i), file[i], Kc_v, C_IP, V_IP);
+                    mes_sen = m11(name.substring(0, 8), sum, String.valueOf(i), file[i], Kc_v, C_IP, V_IP);
+                    System.out.println("mes"+mes_sen);
                     packSend(socket, mes_sen, writer);
-                    try {
-                        String line = bufferedReader.readLine();
-                    } catch (IOException e) {
 
-                    }
                     try {
                         String string = bufferedReader.readLine();
                         System.out.println("收到的报文: " + string);
@@ -305,15 +316,17 @@ public class ServerClient extends Message {
             }
             case "13": {
                 //UI操作，获取文件名
-                String name = "";
+
                 mes_sen = m13(name, Kc_v, C_IP, V_IP);
+                System.out.println(mes_sen);
+
                 packSend(socket, mes_sen, writer);
 
                 break;
             }
             case "20": {
                 //UI操作，获取文件名
-                String name = "";
+                // String name = "";
                 mes_sen = m20(name, Kc_v, C_IP, V_IP);
                 packSend(socket, mes_sen, writer);
 
@@ -321,7 +334,7 @@ public class ServerClient extends Message {
             }
             case "21": {
                 //UI操作，获取文件名
-                String name = "";
+                // String name = "";
                 mes_sen = m21(name, Kc_v, C_IP, V_IP);
                 packSend(socket, mes_sen, writer);
 

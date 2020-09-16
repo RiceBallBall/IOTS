@@ -1,4 +1,4 @@
-//package Client;
+package Client;//package Client;
 //
 //import java.sql.Connection;
 //import java.sql.DriverManager;
